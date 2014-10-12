@@ -13,5 +13,8 @@ urlpatterns = patterns('',
     url(r'^$', hello.views.index, name='index'),
     url(r'^db', hello.views.db, name='db'),
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^polls/', include('polls.urls', namespace="polls")),
+    url(r'^achievements/', include('achievements.urls', namespace="achievements")),
+    url(r'^data-management/', include('data_management.urls', namespace="data")),
 
 )
