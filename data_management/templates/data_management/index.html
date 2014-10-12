@@ -1,0 +1,7 @@
+<div><a href="{% url 'data:load-contests' %}">Load contests</a></div>
+
+{% if last_contest %}
+Latest contest present: {{last_contest.name}}
+{% else %}
+There are no contests loaded in the system
+{% endif %}
