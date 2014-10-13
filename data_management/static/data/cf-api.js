@@ -11,7 +11,7 @@ var contest_phase = {
 
 function getContests(callback, include_gym_contests) {
 	include_gym_contests = defaultFor(include_gym_contests, false);
-	$.getScript("http://codeforces.com/api/contest.list?gym=" + include_gym_contests + "&jsonp=cfapi_getContestsCallback");
+	$.getScript("http://codeforces.com/api/contest.list?gym=" + include_gym_contests + "&jsonp=cfapi_getContestsCallback&lang=en");
 	cfapi_callbacks.getContests = callback;
 }
 
