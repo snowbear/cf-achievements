@@ -7,7 +7,7 @@ class Contestant(models.Model):
         return self.handle
 
 class Contest(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=200)
     cfId = models.IntegerField('Codeforces Contest Id')
     date = models.DateTimeField()
 
