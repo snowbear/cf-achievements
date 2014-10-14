@@ -6,4 +6,6 @@ urlpatterns = patterns('',
     url(r'^$', views.index, name='index'),
     url(r'^contests-update$', views.load_contests, name='load-contests'),
     url(r'^contests-save$', views.save_contest, name='contests-save'),
+    url(r'^update-achievement/(?P<achievementId>\d+)$', views.update_achievement, name='update-achievement'),
+    url(r'^save-contest-achievement$', views.save_contest_achievement, name='save-contest-achievement'),
 )

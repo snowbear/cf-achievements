@@ -1,0 +1,117 @@
+{% load staticfiles %}
+
+<script type="text/javascript" src="{% static 'data/common.js' %}" ></script>
+<script type="text/javascript" src="{% static 'data/cf-api.js' %}" ></script>
+<script type="text/javascript" src="{% static 'data/jquery.1.11.1.min.js' %}" ></script>
+
+<script>
+
+function groupBy(array, groupingFields) {
+	var result = { };
+	
+	$.each(array, function (_, item) {
+		var ptr = result;
+		$.each(groupingFields, function (_, field) {
+			var value = item[field];
+			if (is_undefined(ptr[value]))
+				ptr[value] = { };
+			ptr = ptr[value];
+		});
+		if (is_undefined(ptr.items)) ptr.items = [];
+		ptr.items.push(item);
+	});
+	
+	return result;
+}
+
+var achievements = [];
+
+function add_achievement(contestant, comment) {
+	achievements.push( { handle : contestant, comment : comment } );
+}
+
+function calc_did_not_scratch_me() {
+	var results = [];
+	$.each(hacks, function (i, hack) {
+		if (hack.hacker.members[0].handle == "tourist")
+			if (hack.verdict === hack_verdict.unsuccessful || hack.verdict === hack_verdict.successful) {
+				results.push( { defender: hack.defender.members[0].handle, 
+								problem: hack.problem.index, 
+								wasHacked: hack.verdict === hack_verdict.successful } );
+			}
+	});
+	
+	log(results);
+	
+	var groups = groupBy(results, ['defender', 'problem']);
+	
+	log(groups);
+		
+	for (var defender in groups) {
+		for (var problem in groups[defender]) {
+			var defended = false;
+			$.each(groups[defender][problem].items, function (_, item) {
+				if (item.wasHacked) {
+					defended = false;
+					return false;
+				} else {
+					defended = true;
+				}
+			});
+			if (defended) {
+				log(defender + " - " + problem);
+				add_achievement(defender, "the successful defence of his problem " + problem + " from tourist during [contest:" + contestId + "]");
+			}
+		}
+	}
+}
+
+var current_loader = {
+	did_not_scratch_me: { func: calc_did_not_scratch_me		, need_hacks: true,		need_standings: false	}
+}.{{loader_name}};
+
+var contestId;
+var achievementId;
+
+var hacks;
+var standings;
+
+function load() {
+	contestId = $("input[name='contestId']").val();
+	achievementId = $("input[name='achievementId']").val();
+		
+	if (current_loader.need_hacks) getHacks(onHacksLoaded, contestId);
+	else onHacksLoaded();
+}
+
+function onHacksLoaded(hacksResult) {
+	hacks = hacksResult;
+	
+	if (current_loader.need_standings) getFullStandings(onStandingsLoaded, contestId);
+	else onStandingsLoaded();
+}
+
+function onStandingsLoaded(standingsResult) {
+	standings = standingsResult;
+
+	current_loader.func();
+	var achievementsJson = JSON.stringify(achievements);
+	$("textarea[name='resultData']").val(achievementsJson);
+	if (!is_debug()) $("#saveForm").submit();
+}
+
+</script>
+
+<script>
+$(document).ready(load);
+</script>
+
+<form id="saveForm" method="POST" action="{% url 'data:save-contest-achievement' %}">
+	{% csrf_token %}
+	<input type="text" name="contestId" value="{{ contestId }}" /> <br />
+	<input type="text" name="achievementId" value="{{ achievementId }}" /> <br />
+
+	<textarea type="text" name="resultData" style="width:1000px; height:200px;"></textarea> <br />
+	<input type="submit" value="Save" />
+	
+</form>

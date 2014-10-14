@@ -13,7 +13,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Achievement',
             fields=[
-                ('id', models.AutoField(serialize=False, verbose_name='ID', auto_created=True, primary_key=True)),
+                ('id', models.IntegerField(serialize=False, primary_key=True)),
                 ('name', models.CharField(max_length=100)),
                 ('description', models.CharField(max_length=1000)),
             ],
@@ -24,9 +24,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Contest',
             fields=[
-                ('id', models.AutoField(serialize=False, verbose_name='ID', auto_created=True, primary_key=True)),
-                ('name', models.CharField(max_length=100)),
-                ('cfId', models.IntegerField()),
+                ('id', models.IntegerField(serialize=False, primary_key=True)),
+                ('name', models.CharField(max_length=200)),
                 ('date', models.DateTimeField()),
             ],
             options={
@@ -36,8 +35,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Contestant',
             fields=[
-                ('id', models.AutoField(serialize=False, verbose_name='ID', auto_created=True, primary_key=True)),
-                ('handle', models.CharField(max_length=200)),
+                ('id', models.AutoField(verbose_name='ID', serialize=False, primary_key=True, auto_created=True)),
+                ('handle', models.CharField(unique=True, max_length=200)),
             ],
             options={
             },
@@ -46,7 +45,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Rewarding',
             fields=[
-                ('id', models.AutoField(serialize=False, verbose_name='ID', auto_created=True, primary_key=True)),
+                ('id', models.AutoField(verbose_name='ID', serialize=False, primary_key=True, auto_created=True)),
                 ('comment', models.CharField(max_length=1000)),
                 ('achievement', models.ForeignKey(to='achievements.Achievement')),
                 ('participant', models.ForeignKey(to='achievements.Contestant')),

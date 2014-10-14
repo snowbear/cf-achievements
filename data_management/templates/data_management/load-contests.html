@@ -14,6 +14,12 @@ function load() {
 function contests_loaded(contests) {
 	var contest_to_load = undefined;
 	
+	contests.sort(function (c1, c2) {
+		if (c1.startTimeSeconds < c2.startTimeSeconds) return -1;
+		if (c1.startTimeSeconds > c2.startTimeSeconds) return +1;
+		return 0;
+	});
+	
 	$.each(contests, function(i, contest) {
 		if ($.inArray(contest.id, known_contests) == -1 && contest.phase === contest_phase.finished) {
 			contest_to_load = contest;

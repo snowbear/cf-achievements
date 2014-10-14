@@ -1,3 +1,5 @@
 from django.contrib import admin
 
-# Register your models here.
+from data_management.models import *
+
+admin.site.register(AchievementParseProgress_ByContest)
