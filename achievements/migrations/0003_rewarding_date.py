@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django.utils import timezone
 from django.db import models, migrations
-import datetime
-
 
 class Migration(migrations.Migration):
 
@@ -15,7 +14,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='rewarding',
             name='date',
-            field=models.DateTimeField(default=datetime.datetime(1970, 1, 1, 4, 0, 1)),
+            field=models.DateTimeField(default=timezone.now()),
             preserve_default=False,
         ),
     ]
