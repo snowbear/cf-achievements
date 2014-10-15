@@ -1,5 +1,13 @@
 var cfapi_callbacks = {};
 
+var participant_type = {
+	 contestant: 'CONTESTANT', 
+	 practice: 'PRACTICE', 
+	 virtual: 'VIRTUAL',
+	 manager: 'MANAGER',
+	 out_of_competition: 'OUT_OF_COMPETITION',
+};
+
 var contest_phase = {
 	before: 'BEFORE',
 	coding: 'CODING',
@@ -47,6 +55,35 @@ function cfapi_getContestsCallback(res) {
 	} else alert('Error occured while loading Contests');
 }
 
+var submissions_progress;
+
+function getSubmissions(callback, contestId) {
+	submissions_progress = {
+		result: [],
+		callback: callback,
+		contestId: contestId,
+	}
+	getSubmissionsInternal();
+}
+
+function getSubmissionsInternal() {
+	var parameters = "contestId=" + submissions_progress.contestId +
+					"&from=" + (submissions_progress.result.length + 1) +
+					"&count=30000";
+	make_api_call("contest.status", parameters);
+}
+
+function cfapi_getSubmissionsInternalCallback(res) {
+	res = res.result;
+	if (res.length === 0) {
+		submissions_progress.callback(submissions_progress.result);
+	} else {
+		submissions_progress.result = 
+				submissions_progress.result.concat(res);
+		getSubmissionsInternal();
+	}
+}
+
 var full_standings_loading_progress;
 
 function getFullStandings(callback, contestId) {
@@ -68,7 +105,6 @@ function getFullStandingsInternal() {
 
 function cfapi_getFullStandingsInternalCallback(res) {
 	res = res.result;
-	x = res;
 	full_standings_loading_progress.result.problems = res.problems;
 	if (res.rows.length === 0) {
 		full_standings_loading_progress.callback(full_standings_loading_progress.result);

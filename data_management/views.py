@@ -41,6 +41,7 @@ def save_contest(request):
 
 achievement_id_to_loader_name_mapping = {
         DID_NOT_SCRATCH_ME.id: 'did_not_scratch_me',
+        PERESVET.id: 'peresvet',
     };
 
 def update_achievement(request, achievementId):

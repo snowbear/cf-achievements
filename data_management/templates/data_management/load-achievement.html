@@ -30,6 +30,14 @@ function add_achievement(contestant, comment) {
 	achievements.push( { handle : contestant, comment : comment } );
 }
 
+function contest_tag(contestId) {
+	return "[contest:" + contestId + "]";
+}
+
+function user_tag(handle) {
+	return "[user:" + handle + "]";
+}
+
 function calc_did_not_scratch_me() {
 	var results = [];
 	$.each(hacks, function (i, hack) {
@@ -60,14 +68,76 @@ function calc_did_not_scratch_me() {
 			});
 			if (defended) {
 				log(defender + " - " + problem);
-				add_achievement(defender, "the successful defence of his problem " + problem + " from tourist during [contest:" + contestId + "]");
+				add_achievement(defender, "the successful defence of his problem " + problem + " from tourist during " + contest_tag(contestId));
 			}
 		}
 	}
+	finish();
+}
+
+function is_online_participant(party) {
+	return party.participantType === participant_type.contestant ||
+		   party.participantType === participant_type.out_of_competition;
+}
+
+function has_submissions_after(handle, problem, t) {
+	for (var i = 0 ; i < submissions.length ; i++)
+		if (is_online_participant(submissions[i].author))
+		if (submissions[i].author.members[0].handle === handle)
+		if (submissions[i].problem.index === problem)
+		if (submissions[i].creationTimeSeconds > t)
+			return true;
+	return false;
+}
+
+function calc_peresvet() {
+	var hacks_filtered = [];
+	$.each(hacks, function (i, hack) {
+		if (hack.verdict === hack_verdict.successful) {
+			var item = {	handle1: hack.hacker.members[0].handle,
+							handle2: hack.defender.members[0].handle,
+							problem: hack.problem.index,
+							swapped: false,
+							time: hack.creationTimeSeconds };
+			
+			if (item.handle1 > item.handle2) { var tmp = item.handle1; item.handle1 = item.handle2; item.handle2 = tmp; item.swapped = true; }
+			hacks_filtered.push(item);
+		}
+	});
+	
+	log(hacks_filtered);
+	
+	var hacks_grouped = groupBy(hacks_filtered, ['handle1', 'handle2', 'problem']);
+	var peresvet_final_results = [];
+	
+	for (var handle1 in hacks_grouped)
+		for (var handle2 in hacks_grouped[handle1])
+			for (var problem in hacks_grouped[handle1][handle2]) {
+				var t = hacks_grouped[handle1][handle2][problem].items[0].time;
+				var hackedForward = false;
+				var hackedBack = false;
+				$.each(hacks_grouped[handle1][handle2][problem].items, function (_, item) {
+					if (item.swapped) hackedBack = true;
+					else hackedForward = true;
+					t = Math.min(t, item.time);
+				});
+				
+				if (!hackedBack || !hackedForward) continue;
+				
+				if (has_submissions_after(handle1, problem, t) ||
+					has_submissions_after(handle2, problem, t)) continue;
+				
+				log(handle1 + " " + handle2 + " " + t);
+				
+				add_achievement(handle1, "the successful mutual hack with " + user_tag(handle2) + " on " + problem + " problem in " + contest_tag(contestId));
+				add_achievement(handle2, "the successful mutual hack with " + user_tag(handle1) + " on " + problem + " problem in " + contest_tag(contestId));
+			}
+	finish();
 }
 
 var current_loader = {
-	did_not_scratch_me: { func: calc_did_not_scratch_me		, need_hacks: true,		need_standings: false	}
+	did_not_scratch_me: { func: calc_did_not_scratch_me		, need_hacks: true,		need_standings: false	, need_submissions: false	},
+	peresvet: 			{ func: calc_peresvet				, need_hacks: true,		need_standings: true	, need_submissions: true	},
 }.{{loader_name}};
 
 var contestId;
@@ -75,26 +145,26 @@ var achievementId;
 
 var hacks;
 var standings;
+var submissions;
 
 function load() {
 	contestId = $("input[name='contestId']").val();
 	achievementId = $("input[name='achievementId']").val();
 		
-	if (current_loader.need_hacks) getHacks(onHacksLoaded, contestId);
-	else onHacksLoaded();
+	proceed_loading();
 }
 
-function onHacksLoaded(hacksResult) {
-	hacks = hacksResult;
-	
-	if (current_loader.need_standings) getFullStandings(onStandingsLoaded, contestId);
-	else onStandingsLoaded();
+function proceed_loading() {
+	if (current_loader.need_hacks && is_undefined(hacks))
+		getHacks(function (h) { hacks = h; proceed_loading(); }, contestId);
+	else if (current_loader.need_standings && is_undefined(standings))
+		getFullStandings(function (res) { standings = res; proceed_loading(); }, contestId);
+	else if (current_loader.need_submissions && is_undefined(submissions))
+		getSubmissions(function (res) { submissions = res; proceed_loading(); }, contestId);
+	else current_loader.func();
 }
 
-function onStandingsLoaded(standingsResult) {
-	standings = standingsResult;
-
-	current_loader.func();
+function finish() {
 	var achievementsJson = JSON.stringify(achievements);
 	$("textarea[name='resultData']").val(achievementsJson);
 	if (!is_debug()) $("#saveForm").submit();
