@@ -1,0 +1,14 @@
+{% if last_achievements %}
+    <ul>
+    {% for rewarding in last_achievements %}
+        <li>
+			{{ rewarding.date }}:
+			<a href="{% url 'achievements:profile' rewarding.participant.handle %}">{{ rewarding.participant.handle }}</a>
+			got "<strong>{{ rewarding.achievement.name }}</strong>" achievement
+			for {{ rewarding.comment }}
+		</li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>There are no achievements here yet.</p>
+{% endif %}
