@@ -74,7 +74,7 @@ def save_contest_achievement(request):
         comment = data['comment']
 
         contestant = Contestant.objects.get_or_create(handle = handle)[0]
-        Rewarding.objects.create(participant = contestant, achievement = achievement, comment = comment, date = contest.date)
+        Rewarding.objects.create(participant = contestant, achievement = achievement, comment = comment, date = contest.date, contest = contest)
     parseState.lastParsedContest = contest
     parseState.save()
     return HttpResponseRedirect(reverse('data:update-achievement', args = [achievementId]))
