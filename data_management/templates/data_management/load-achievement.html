@@ -68,7 +68,7 @@ function calc_did_not_scratch_me() {
 			});
 			if (defended) {
 				log(defender + " - " + problem);
-				add_achievement(defender, "the successful defence of his problem " + problem + " from tourist during " + contest_tag(contestId));
+				add_achievement(defender, "the successful defence of his problem " + problem + " from " + user_tag('tourist') +" during " + contest_tag(contestId));
 			}
 		}
 	}
@@ -110,6 +110,10 @@ function calc_peresvet() {
 	var hacks_grouped = groupBy(hacks_filtered, ['handle1', 'handle2', 'problem']);
 	var peresvet_final_results = [];
 	
+	var add_ach_helper = function(handle1, handle2, problem, contestId) {
+		add_achievement(handle1, "the successful mutual hack with " + user_tag(handle2) + " on problem " + problem + " in " + contest_tag(contestId));
+	};
+	
 	for (var handle1 in hacks_grouped)
 		for (var handle2 in hacks_grouped[handle1])
 			for (var problem in hacks_grouped[handle1][handle2]) {
@@ -129,8 +133,8 @@ function calc_peresvet() {
 				
 				log(handle1 + " " + handle2 + " " + t);
 				
-				add_achievement(handle1, "the successful mutual hack with " + user_tag(handle2) + " on " + problem + " problem in " + contest_tag(contestId));
-				add_achievement(handle2, "the successful mutual hack with " + user_tag(handle1) + " on " + problem + " problem in " + contest_tag(contestId));
+				add_ach_helper(handle1, handle2, problem, contestId);
+				add_ach_helper(handle2, handle1, problem, contestId);
 			}
 	finish();
 }
