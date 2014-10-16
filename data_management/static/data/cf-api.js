@@ -127,3 +127,12 @@ function cfapi_getHacksCallback(res) {
 	});
 	return_to_callback(res.result);
 }
+
+function getRatedUsers(callback, activeOnly) {
+	activeOnly = defaultFor(activeOnly, false);
+	make_api_call("user.ratedList", "activeOnly="+activeOnly, callback);
+}
+
+function cfapi_getRatedUsersCallback(res) {
+	return_to_callback(res.result);
+}

@@ -1,4 +1,5 @@
-<div><a href="{% url 'data:load-contests' %}">Load contests</a></div>
+<p><a href="{% url 'data:load-contests' %}">Load contests</a></p>
+<p><a href="{% url 'data:ratings-update' %}">Update ratings</a></p>
 
 {% if last_contest %}
 Latest contest present: {{last_contest.name}}

@@ -1,6 +1,7 @@
 import datetime
 import json
 
+from django.db import connection
 from django.db.models import Min
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect
@@ -8,7 +9,7 @@ from django.shortcuts import render
 
 from achievements.models import *
 from achievements.achievement_data import *
-from data_management.models import AchievementParseProgress_ByContest
+from data_management.models import *
 
 def index(request):
     last_contest = Contest.objects.order_by('-date').first()
@@ -78,3 +79,22 @@ def save_contest_achievement(request):
     parseState.lastParsedContest = contest
     parseState.save()
     return HttpResponseRedirect(reverse('data:update-achievement', args = [achievementId]))
+
+def ratings_update(request):
+    return render(request, 'data_management/update-ratings.html', None)
+
+def ratings_save(request):
+    data = json.loads(request.POST['resultData'])
+    existing_handles = set()
+    existing_handles.update([c.handle for c in Contestant.objects.all()])
+    missing_ids = [c['handle'] for c in data if not (c['handle'] in existing_handles)]
+    Contestant.objects.bulk_create([Contestant(handle = h) for h in missing_ids])
+    
+    temp_user_rating.objects.all().delete()
+    temp_user_rating.objects.bulk_create([temp_user_rating(tmp_handle = h['handle'], tmp_rating = h['rating']) for h in data])
+    
+    cursor = connection.cursor()
+    cursor.execute("update achievements_contestant set rating = (select tmp_rating from data_management_temp_user_rating where tmp_handle = handle)")
+    temp_user_rating.objects.all().delete()
+    return HttpResponseRedirect(reverse('data:index'))
+  

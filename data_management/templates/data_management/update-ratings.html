@@ -1,0 +1,32 @@
+{% load staticfiles %}
+
+<script type="text/javascript" src="{% static 'data/common.js' %}" ></script>
+<script type="text/javascript" src="{% static 'data/cf-api.js' %}" ></script>
+<script type="text/javascript" src="{% static 'data/jquery.1.11.1.min.js' %}" ></script>
+
+<script type="text/javascript">
+function load() {
+	getRatedUsers(onRatingsLoaded, false);
+}
+
+function onRatingsLoaded(result) {
+	var results = [];
+	$.each(result, function (_, user) {
+		results.push( {	handle: user.handle,
+						rating: user.rating,
+					} );
+	});
+
+	var achievementsJson = JSON.stringify(results);
+	$("textarea[name='resultData']").val(achievementsJson);
+	if (!is_debug()) $("#saveForm").submit();	
+}
+
+$(document).ready(load);
+</script>
+
+<form id="saveForm" action="{% url 'data:ratings-save' %}" method="POST">
+	{% csrf_token %}
+	<textarea type="text" name="resultData" style="width:1000px; height:200px;"></textarea> <br />
+	<input type="submit" value="Save" />
+</form>
