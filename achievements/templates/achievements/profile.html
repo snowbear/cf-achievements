@@ -1,3 +1,5 @@
+{% load tag_replacer %}
+
 {% if last_achievements %}
     <ul>
     {% for rewarding in last_achievements %}
@@ -5,7 +7,7 @@
 			{{ rewarding.date }}:
 			<a href="{% url 'achievements:profile' rewarding.participant.handle %}">{{ rewarding.participant.handle }}</a>
 			got "<strong>{{ rewarding.achievement.name }}</strong>" achievement
-			for {{ rewarding.comment }}
+			for {{ rewarding.comment|replace_tags }}
 		</li>
     {% endfor %}
     </ul>
