@@ -6,3 +6,14 @@ Latest contest present: {{last_contest.name}}
 {% else %}
 There are no contests loaded in the system
 {% endif %}
+
+<h3> Achievements: </h3>
+
+{% for achievement in achievements %}
+  <p>
+  {{ achievement.achievement.name }}. Last parsed: {{ achievement.last_parsed.lastParsedContest }}
+  {% if achievement.needs_update %}
+	<a href="{% url 'data:update-achievement' achievement.achievement.id %}">Update</a>
+  {% endif %}
+  </p>
+{% endfor %}

@@ -12,10 +12,17 @@ from achievements.achievement_data import *
 from data_management.models import *
 
 def index(request):
-    last_contest = Contest.objects.order_by('-date').first()
+    last_contest = Contest.objects.order_by('-id').first()
+    
+    achievements = [{'achievement': a, 'last_parsed': AchievementParseProgress_ByContest.get_for_achievement(a.id)} for a in Achievement.objects.all()]
+    
+    for ach in achievements:
+        ach['needs_update'] = ach['last_parsed'].lastParsedContest != last_contest
+    
     return render(request,
                   'data_management/index.html', {
                       'last_contest': last_contest,
+                      'achievements': achievements,
                     });
                     
     return HttpResponse(question.question_text)
