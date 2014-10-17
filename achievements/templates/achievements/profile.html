@@ -1,11 +1,14 @@
-{% load tag_replacer %}
+{% load template_filters %}
+{% load staticfiles %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'achievements/cf-styles.css' %}" ></script>
 
 {% if last_achievements %}
     <ul>
     {% for rewarding in last_achievements %}
         <li>
 			{{ rewarding.date }}:
-			<a href="{% url 'achievements:profile' rewarding.participant.handle %}">{{ rewarding.participant.handle }}</a>
+			{{ rewarding.participant.handle|to_user_link }}
 			got "<strong>{{ rewarding.achievement.name }}</strong>" achievement
 			for {{ rewarding.comment|replace_tags }}
 		</li>
