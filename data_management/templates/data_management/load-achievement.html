@@ -2,82 +2,26 @@
 
 <script type="text/javascript" src="{% static 'data/common.js' %}" ></script>
 <script type="text/javascript" src="{% static 'data/cf-api.js' %}" ></script>
+<script type="text/javascript" src="{% static 'data/helpers.js' %}" ></script>
+<script type="text/javascript" src="{% static 'data/underscore-min.js' %}" ></script>
 <script type="text/javascript" src="{% static 'data/jquery.1.11.1.min.js' %}" ></script>
 
 <script>
+var need_hacks = false;
+var need_standings = false;
+var need_submissions = false;
+</script>
 
-function groupBy(array, groupingFields) {
-	var result = { };
-	
-	$.each(array, function (_, item) {
-		var ptr = result;
-		$.each(groupingFields, function (_, field) {
-			var value = item[field];
-			if (is_undefined(ptr[value]))
-				ptr[value] = { };
-			ptr = ptr[value];
-		});
-		if (is_undefined(ptr.items)) ptr.items = [];
-		ptr.items.push(item);
-	});
-	
-	return result;
-}
+<script type="text/javascript" src="{% static 'data/achievement-calculators/' %}{{loader_name}}.js" ></script>
+
+<script>
 
 var achievements = [];
 
-function add_achievement(contestant, comment) {
-	achievements.push( { handle : contestant, comment : comment } );
-}
-
-function contest_tag(contestId) {
-	return "[contest:" + contestId + "]";
-}
-
-function user_tag(handle) {
-	return "[user:" + handle + "]";
-}
-
-function calc_did_not_scratch_me() {
-	var results = [];
-	$.each(hacks, function (i, hack) {
-		if (hack.hacker.members[0].handle == "tourist")
-			if (hack.verdict === hack_verdict.unsuccessful || hack.verdict === hack_verdict.successful) {
-				results.push( { defender: hack.defender.members[0].handle, 
-								problem: hack.problem.index, 
-								wasHacked: hack.verdict === hack_verdict.successful } );
-			}
-	});
-	
-	log(results);
-	
-	var groups = groupBy(results, ['defender', 'problem']);
-	
-	log(groups);
-		
-	for (var defender in groups) {
-		for (var problem in groups[defender]) {
-			var defended = false;
-			$.each(groups[defender][problem].items, function (_, item) {
-				if (item.wasHacked) {
-					defended = false;
-					return false;
-				} else {
-					defended = true;
-				}
-			});
-			if (defended) {
-				log(defender + " - " + problem);
-				add_achievement(defender, "the successful defence of his problem " + problem + " from " + user_tag('tourist') +" during " + contest_tag(contestId));
-			}
-		}
-	}
-	finish();
-}
-
-function is_online_participant(party) {
-	return party.participantType === participant_type.contestant ||
-		   party.participantType === participant_type.out_of_competition;
+function add_achievement(contestant, comment, rank) {
+	var achievement = { handle : contestant, comment : comment };
+	if (!is_undefined(rank)) achievement.rank = rank;
+	achievements.push( achievement );
 }
 
 function has_submissions_after(handle, problem, t) {
@@ -89,60 +33,6 @@ function has_submissions_after(handle, problem, t) {
 			return true;
 	return false;
 }
-
-function calc_peresvet() {
-	var hacks_filtered = [];
-	$.each(hacks, function (i, hack) {
-		if (hack.verdict === hack_verdict.successful) {
-			var item = {	handle1: hack.hacker.members[0].handle,
-							handle2: hack.defender.members[0].handle,
-							problem: hack.problem.index,
-							swapped: false,
-							time: hack.creationTimeSeconds };
-			
-			if (item.handle1 > item.handle2) { var tmp = item.handle1; item.handle1 = item.handle2; item.handle2 = tmp; item.swapped = true; }
-			hacks_filtered.push(item);
-		}
-	});
-	
-	log(hacks_filtered);
-	
-	var hacks_grouped = groupBy(hacks_filtered, ['handle1', 'handle2', 'problem']);
-	var peresvet_final_results = [];
-	
-	var add_ach_helper = function(handle1, handle2, problem, contestId) {
-		add_achievement(handle1, "the successful mutual hack with " + user_tag(handle2) + " on problem " + problem + " in " + contest_tag(contestId));
-	};
-	
-	for (var handle1 in hacks_grouped)
-		for (var handle2 in hacks_grouped[handle1])
-			for (var problem in hacks_grouped[handle1][handle2]) {
-				var t = hacks_grouped[handle1][handle2][problem].items[0].time;
-				var hackedForward = false;
-				var hackedBack = false;
-				$.each(hacks_grouped[handle1][handle2][problem].items, function (_, item) {
-					if (item.swapped) hackedBack = true;
-					else hackedForward = true;
-					t = Math.min(t, item.time);
-				});
-				
-				if (!hackedBack || !hackedForward) continue;
-				
-				if (has_submissions_after(handle1, problem, t) ||
-					has_submissions_after(handle2, problem, t)) continue;
-				
-				log(handle1 + " " + handle2 + " " + t);
-				
-				add_ach_helper(handle1, handle2, problem, contestId);
-				add_ach_helper(handle2, handle1, problem, contestId);
-			}
-	finish();
-}
-
-var current_loader = {
-	did_not_scratch_me: { func: calc_did_not_scratch_me		, need_hacks: true,		need_standings: false	, need_submissions: false	},
-	peresvet: 			{ func: calc_peresvet				, need_hacks: true,		need_standings: true	, need_submissions: true	},
-}.{{loader_name}};
 
 var contestId;
 var achievementId;
@@ -159,13 +49,13 @@ function load() {
 }
 
 function proceed_loading() {
-	if (current_loader.need_hacks && is_undefined(hacks))
+	if (!is_undefined(need_hacks) && need_hacks && is_undefined(hacks))
 		getHacks(function (h) { hacks = h; proceed_loading(); }, contestId);
-	else if (current_loader.need_standings && is_undefined(standings))
+	else if (!is_undefined(need_standings) && need_standings && is_undefined(standings))
 		getFullStandings(function (res) { standings = res; proceed_loading(); }, contestId);
-	else if (current_loader.need_submissions && is_undefined(submissions))
+	else if (need_submissions && is_undefined(submissions))
 		getSubmissions(function (res) { submissions = res; proceed_loading(); }, contestId);
-	else current_loader.func();
+	else achievement_calculator(finish);
 }
 
 function finish() {
