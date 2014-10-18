@@ -29,6 +29,7 @@ class Rewarding(models.Model):
     comment = models.CharField(max_length=1000)
     date = models.DateTimeField()
     contest = models.ForeignKey(Contest, null = True)
+    level = models.IntegerField(null = True)
 
     def __str__(self):
         return self.participant.handle + " - " + self.achievement.name

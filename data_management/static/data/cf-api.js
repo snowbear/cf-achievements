@@ -1,5 +1,9 @@
 var cfapi_callbacks = {};
 
+var submission_verdict = {
+	ok: 'OK',
+};
+
 var participant_type = {
 	 contestant: 'CONTESTANT', 
 	 practice: 'PRACTICE', 

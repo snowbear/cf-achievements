@@ -18,9 +18,9 @@ var need_submissions = false;
 
 var achievements = [];
 
-function add_achievement(contestant, comment, rank) {
+function add_achievement(contestant, comment, level) {
 	var achievement = { handle : contestant, comment : comment };
-	if (!is_undefined(rank)) achievement.rank = rank;
+	if (!is_undefined(level)) achievement.level = level;
 	achievements.push( achievement );
 }
 

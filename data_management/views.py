@@ -50,6 +50,7 @@ def save_contest(request):
 achievement_id_to_loader_name_mapping = {
         DID_NOT_SCRATCH_ME.id: 'did_not_scratch_me',
         PERESVET.id: 'peresvet',
+        POLYGLOT.id: 'polyglot',
     };
 
 def update_achievement(request, achievementId):
@@ -80,9 +81,12 @@ def save_contest_achievement(request):
     for data in achievements:
         handle = data['handle']
         comment = data['comment']
+        level = None
+        if 'level' in data:
+            level = data['level']
 
         contestant = Contestant.objects.get_or_create(handle = handle)[0]
-        Rewarding.objects.create(participant = contestant, achievement = achievement, comment = comment, date = contest.date, contest = contest)
+        Rewarding.objects.create(participant = contestant, achievement = achievement, comment = comment, date = contest.date, contest = contest, level = level)
     parseState.lastParsedContest = contest
     parseState.save()
     return HttpResponseRedirect(reverse('data:update-achievement', args = [achievementId]))

@@ -8,3 +8,7 @@ class PERESVET:
     name = "Peresvet & Temir-murza"
     description = "Together with some other contestant mutually hack each other's submissions on the same problem. Hacked submissions should be the last submissions on this problem for both of you."
     
+class POLYGLOT:
+    id = 3
+    name = "Polyglot"
+    description = "In a rated for you contest get problems accepted in at least two different programming languages. Different variations or versions of the same language are not considered as different languages."
