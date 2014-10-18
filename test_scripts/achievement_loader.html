@@ -1,0 +1,90 @@
+<html>
+<head>
+<script type="text/javascript" src="..\data_management\static\data\common.js" ></script>
+<script type="text/javascript" src="..\data_management\static\data\cf-api.js" ></script>
+<script type="text/javascript" src="..\data_management\static\data\helpers.js" ></script>
+<script type="text/javascript" src="..\data_management\static\data\underscore-min.js" ></script>
+<script type="text/javascript" src="..\data_management\static\data\jquery.1.11.1.min.js" ></script>
+
+<script>
+var need_hacks = false;
+var need_standings = false;
+var need_submissions = false;
+</script>
+
+<script type="text/javascript" src="..\data_management\static\data\achievement-calculators\polyglot.js" ></script>
+
+<script>
+
+var counter = 0;
+var users_dict = { };
+function add_achievement(contestant, comment, level) {
+	log("contestId: " + contestId + ", user: " + contestant + ", comment: " + comment + ", level: " + level);
+	if (counter % 100 == 0) console.clear();
+	counter++;
+	$("#totalCount").val(counter);
+	users_dict[contestant] = true;
+	$("#userCount").val(_.size(users_dict));
+}
+
+function important(str) { 
+	var ta = $("#txt");
+	str = ta.val() + str + "\n";
+	ta.val(str);
+}
+
+var contestId = 471;
+var achievementId;
+
+var hacks;
+var standings;
+var submissions;
+
+var contests_to_load = [];
+
+function load() {
+	getContests(on_contests_loaded);
+}
+
+function on_contests_loaded(contests) {
+	if (!is_undefined(contests)) {
+		contests = _.filter(contests, function (c) { return c.phase == contest_phase.finished; });
+		contests_to_load = _.map(contests, function (c) { return c.id; });
+	}
+	
+	if (_.size(contests_to_load) > 0) {
+		var next_contest_id = _.first(contests_to_load);
+		contests_to_load = _.tail(contests_to_load);
+		load_contest(next_contest_id);
+	}
+}
+
+function load_contest(id) {
+	contestId = id;
+	hacks = standings = submissions = undefined;
+	proceed_loading();
+}
+
+function proceed_loading() {
+	if (need_hacks && is_undefined(hacks))
+		getHacks(function (h) { hacks = h; proceed_loading(); }, contestId);
+	else if (need_standings && is_undefined(standings))
+		getFullStandings(function (res) { standings = res; proceed_loading(); }, contestId);
+	else if (need_submissions && is_undefined(submissions))
+		getSubmissions(function (res) { submissions = res; proceed_loading(); }, contestId);
+	else achievement_calculator(on_contests_loaded);
+}
+
+</script>
+
+<script>
+$(document).ready(load);
+</script>
+
+</head>
+<body>
+<p>total achievements: <input id="totalCount" value="0" /> </p>
+<p>distinct users: <input id="userCount" value="0" /> </p>
+<p><textarea id="txt" rows="20" style="width:600px"></textarea> </p>
+</body>
+</html>
