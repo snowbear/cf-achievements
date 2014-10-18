@@ -12,3 +12,8 @@ class POLYGLOT:
     id = 3
     name = "Polyglot"
     description = "In a rated for you contest get problems accepted in at least two different programming languages. Different variations or versions of the same language are not considered as different languages."
+
+class LANGUAGE_DOES_NOT_MATTER:
+    id = 4
+    name = "Language does not matter"
+    description = "Solve at least two problems in Unknown Language Round"

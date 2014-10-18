@@ -10,9 +10,11 @@
 var need_hacks = false;
 var need_standings = false;
 var need_submissions = false;
+
+function contest_predicate() { return true; }
 </script>
 
-<script type="text/javascript" src="..\data_management\static\data\achievement-calculators\polyglot.js" ></script>
+<script type="text/javascript" src="..\data_management\static\data\achievement-calculators\language_does_not_matter.js" ></script>
 
 <script>
 
@@ -20,7 +22,7 @@ var counter = 0;
 var users_dict = { };
 function add_achievement(contestant, comment, level) {
 	log("contestId: " + contestId + ", user: " + contestant + ", comment: " + comment + ", level: " + level);
-	if (counter % 100 == 0) console.clear();
+	if (counter % 1000 == 0) console.clear();
 	counter++;
 	$("#totalCount").val(counter);
 	users_dict[contestant] = true;
@@ -62,7 +64,10 @@ function on_contests_loaded(contests) {
 function load_contest(id) {
 	contestId = id;
 	hacks = standings = submissions = undefined;
-	proceed_loading();
+	if (contest_predicate(contestId))
+		proceed_loading();
+	else
+		on_contests_loaded();
 }
 
 function proceed_loading() {

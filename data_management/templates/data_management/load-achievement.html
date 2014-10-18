@@ -10,6 +10,8 @@
 var need_hacks = false;
 var need_standings = false;
 var need_submissions = false;
+
+function contest_predicate() { return true; }
 </script>
 
 <script type="text/javascript" src="{% static 'data/achievement-calculators/' %}{{loader_name}}.js" ></script>
@@ -42,10 +44,13 @@ var standings;
 var submissions;
 
 function load() {
-	contestId = $("input[name='contestId']").val();
+	contestId = parseInt($("input[name='contestId']").val());
 	achievementId = $("input[name='achievementId']").val();
-		
-	proceed_loading();
+	
+	if (contest_predicate(contestId))
+		proceed_loading();
+	else
+		finish();
 }
 
 function proceed_loading() {

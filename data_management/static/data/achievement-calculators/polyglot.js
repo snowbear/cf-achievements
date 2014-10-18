@@ -31,17 +31,6 @@ function _distinct(list) {
 	return Object.keys(counter);
 }
 
-function join_with_commas_and_and(list) {
-	var result = "";
-	var last_index = _.size(list) - 1;
-	$.each(list, function (i, item) {
-		if (i == last_index) result += " and ";
-		else if (i > 0) result += ", ";
-		result += item;
-	});
-	return result;
-}
-
 function achievement_calculator(callback) {
 	init_languages_map();
 

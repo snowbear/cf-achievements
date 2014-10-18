@@ -51,6 +51,7 @@ achievement_id_to_loader_name_mapping = {
         DID_NOT_SCRATCH_ME.id: 'did_not_scratch_me',
         PERESVET.id: 'peresvet',
         POLYGLOT.id: 'polyglot',
+        LANGUAGE_DOES_NOT_MATTER.id: 'language_does_not_matter',
     };
 
 def update_achievement(request, achievementId):
