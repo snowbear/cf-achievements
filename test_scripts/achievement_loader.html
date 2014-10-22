@@ -14,14 +14,16 @@ var need_submissions = false;
 function contest_predicate() { return true; }
 </script>
 
-<script type="text/javascript" src="..\data_management\static\data\achievement-calculators\language_does_not_matter.js" ></script>
+<script type="text/javascript" src="..\data_management\static\data\achievement-calculators\catching_the_last_train.js" ></script>
 
 <script>
 
 var counter = 0;
 var users_dict = { };
 function add_achievement(contestant, comment, level) {
-	log("contestId: " + contestId + ", user: " + contestant + ", comment: " + comment + ", level: " + level);
+	var str = "contestId: " + contestId + ", user: " + contestant + ", comment: " + comment + ", level: " + level;
+	if (!is_undefined(level) && level > 1) important(str);
+	log(str);
 	if (counter % 1000 == 0) console.clear();
 	counter++;
 	$("#totalCount").val(counter);
@@ -90,6 +92,6 @@ $(document).ready(load);
 <body>
 <p>total achievements: <input id="totalCount" value="0" /> </p>
 <p>distinct users: <input id="userCount" value="0" /> </p>
-<p><textarea id="txt" rows="20" style="width:600px"></textarea> </p>
+<p><textarea id="txt" rows="20" style="width:1200px"></textarea> </p>
 </body>
 </html>
