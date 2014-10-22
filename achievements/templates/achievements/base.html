@@ -11,10 +11,7 @@
 
     <title>Codeforces achievements{% block title %}{% endblock %}</title>
 
-    <link href="http://getbootstrap.com/examples/jumbotron/../../dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Custom styles for this template -->
-    <link href="http://getbootstrap.com/examples/jumbotron/jumbotron.css" rel="stylesheet">
+    <link href="{% static 'achievements/bootstrap/bootstrap.min.css' %}" rel="stylesheet">
 
 	<link rel="stylesheet" type="text/css" href="{% static 'achievements/cf-styles.css' %}" ></script>
 	<link rel="stylesheet" type="text/css" href="{% static 'achievements/styles.css' %}" ></script>
@@ -46,8 +43,8 @@
 		{% block content %} {% endblock %}
     </div>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-    <script src="http://getbootstrap.com/examples/jumbotron/../../dist/js/bootstrap.min.js"></script>
-    <script src="http://getbootstrap.com/examples/jumbotron/../../assets/js/ie10-viewport-bug-workaround.js"></script>
+    <script src="{% static 'achievements/jquery.1.11.1.min.js' %}"></script>
+    <script src="{% static 'achievements/bootstrap/bootstrap.min.js' %}"></script>
+    <script src="{% static 'achievements/bootstrap/ie10-viewport-bug-workaround.js' %}"></script>
   </body>
 </html>
