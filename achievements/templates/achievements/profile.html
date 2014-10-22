@@ -8,7 +8,7 @@
     {% for rewarding in last_achievements %}
         <li>
 			{{ rewarding.date }}:
-			{{ rewarding.participant.handle|to_user_link }}
+			{{ rewarding.participant|to_user_link }}
 			got "<strong>{{ rewarding.achievement.name }}</strong>" achievement
 			for {{ rewarding.comment|replace_tags }}
 		</li>

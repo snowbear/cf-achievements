@@ -1,0 +1,28 @@
+{% extends 'achievements/base.html' %}
+{% load template_filters %}
+
+{% block title %} - Contest results{% endblock %}
+
+{% block header %}
+<h2>{{contest.name}}</h2>
+{% endblock %}
+
+{% block content %}
+
+<h3>Achievements received during the round:</h3>
+{% if achievements %}
+    <ul>
+    {% for rewarding in achievements %}
+        <p>
+			{{ rewarding.date }}:
+			{{ rewarding.participant|to_user_link }}
+			got {{ rewarding.achievement|to_achievement_link }} achievement
+			for {{ rewarding.comment|replace_tags }}
+		</p>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>There are no achievements here yet.</p>
+{% endif %}
+
+{% endblock %}

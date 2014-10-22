@@ -17,3 +17,13 @@ def profile(request, handle):
                   'achievements/profile.html', {
                         'last_achievements': last_achievements,
                   })
+
+def contest(request, contestId):
+    contest = Contest.objects.get(pk = contestId)
+    achievements = Rewarding.objects.filter(contest = contest).order_by("-date")
+    return render(request,
+                  'achievements/contest.html', {
+                        'contest': contest,
+                        'achievements': achievements,
+                  })
+    return HttpResponse("112")

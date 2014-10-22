@@ -1,4 +1,5 @@
 import re
+
 from django import template
 from django.core.urlresolvers import reverse
 from django.utils.safestring import mark_safe
@@ -8,6 +9,8 @@ from achievements.models import *
 register = template.Library()
 
 def get_color_style(rating):
+    if rating == None:
+        return "user-black"
     if rating >= 2200:
         return "user-red"
     elif rating >= 1900:
@@ -21,17 +24,30 @@ def get_color_style(rating):
     else:
         return "user-gray"
 
-def get_user_link(handle):
-    user = Contestant.objects.get(handle = handle)
-    cssClass = "";
-    if user.rating != None:
-        cssClass += " rated-user %s" % get_color_style(user.rating)
-    return "<a href=\"%s\" class=\"%s\">%s</a>" % (reverse('achievements:profile', args=[handle]), cssClass, handle)
+def link(destination, text, cssClass = None):
+    classAttribute = ""
+    if cssClass != None:
+        classAttribute = "class='%s'" % cssClass;
+    return "<a href='%s' %s>%s</a>" % (destination, classAttribute, text)
+        
+def get_user_link(user):
+    if type(user) is str:
+        user = Contestant.objects.get(handle = user)
+    cssClass = "rated-user %s" % get_color_style(user.rating)
+    return link(reverse('achievements:profile', args=[user.handle]), user.handle, cssClass)
 
 @register.filter()
-def to_user_link(handle):
-    return mark_safe(get_user_link(handle))
-    
+def to_user_link(user):
+    return mark_safe(get_user_link(user))
+
+def get_contest_link(contestId):
+    contest = Contest.objects.get(pk = contestId)
+    return link(reverse('achievements:contest', args=[contestId]), contest.name, 'contest-link')
+
+@register.filter()
+def to_achievement_link(achievement):
+    return mark_safe(link('#', achievement.name, 'achievement-link'))
+
 @register.filter()
 def replace_tags(input):
     result = ""
@@ -39,8 +55,8 @@ def replace_tags(input):
     for match in re.finditer(r"\[(contest|user):([^\]]+)\]", input):
         result += input[nextChar:match.span()[0]]
         if match.group(1) == "contest":
-            contest = Contest.objects.get(pk = int(match.group(2)))
-            result += contest.name
+            contestId = int(match.group(2))
+            result += get_contest_link(contestId)
         elif match.group(1) == "user":
             handle = match.group(2)
             result += get_user_link(handle)
