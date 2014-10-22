@@ -1,4 +1,5 @@
 var cfapi_callbacks = {};
+var cfapi_data = {};
 
 var submission_verdict = {
 	ok: 'OK',
@@ -57,6 +58,19 @@ function cfapi_getContestsCallback(res) {
 	if (res.status == "OK") {
 		callback(res.result);
 	} else alert('Error occured while loading Contests');
+}
+
+function getContestInfo(callback, contestId) {
+	cfapi_data.getContestInfo_contestId = contestId;
+	cfapi_data.getContestInfo_callback = callback;
+	getContests(cfapi_getContestInfoCallback, false);
+}
+
+function cfapi_getContestInfoCallback(contests) {
+	var contestId = cfapi_data.getContestInfo_contestId;
+	var callback = cfapi_data.getContestInfo_callback;
+	var contest = _.find(contests, function (c) { return c.id == contestId; } );
+	callback(contest);
 }
 
 var submissions_progress;
