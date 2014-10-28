@@ -16,7 +16,7 @@
         <p>
 			{{ rewarding.date }}:
 			{{ rewarding.participant|to_user_link }}
-			got {{ rewarding.achievement|to_achievement_link }} achievement
+			got {{ rewarding.achievement|to_achievement_link }}
 			for {{ rewarding.comment|replace_tags }}
 		</p>
     {% endfor %}

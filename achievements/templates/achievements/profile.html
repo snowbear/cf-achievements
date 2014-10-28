@@ -1,15 +1,43 @@
+{% extends 'achievements/base.html' %}
 {% load template_filters %}
-{% load staticfiles %}
 
-<link rel="stylesheet" type="text/css" href="{% static 'achievements/cf-styles.css' %}" ></script>
+{% block title %} - Contest results{% endblock %}
 
-{% if last_achievements %}
+---------------
+
+{% block header %}
+
+<div class="pull-left">
+<h2>{{ user|to_user_rank }} {{ user|to_user_link }}</h2>
+<h3>Contest rating: {{ user.rating }} </h3>
+<h3>Total achievements: {{ achievements|length }} </h3>
+<h3>Achievements unlocked: {{ achievements_unlocked }} / {{ all_achievements|length }} </h3>
+</div>
+
+<div class="pull-right">
+	<img src='http://codeforces.ru/userphoto/title/{{user.handle}}/photo.jpg'></img>
+</div>
+
+{% endblock %}
+
+---------------
+
+{% block content %}
+
+<ul class="nav nav-pills" role="tablist">
+  <li class="active"><a href="#by_date" role="tab" data-toggle="pill">By date</a></li>
+  <li><a href="#by_achievement" role="tab" data-toggle="pill">By achievement</a></li>
+</ul>
+
+<div class="tab-content">
+  <div class="tab-pane active" id="by_date">
+{% if achievements %}
     <ul>
-    {% for rewarding in last_achievements %}
+    {% for rewarding in achievements %}
         <li>
 			{{ rewarding.date }}:
 			{{ rewarding.participant|to_user_link }}
-			got "<strong>{{ rewarding.achievement.name }}</strong>" achievement
+			got {{ rewarding.achievement|to_achievement_link }}
 			for {{ rewarding.comment|replace_tags }}
 		</li>
     {% endfor %}
@@ -17,3 +45,19 @@
 {% else %}
     <p>There are no achievements here yet.</p>
 {% endif %}
+  </div>
+  
+  <div class="tab-pane" id="by_achievement">
+    {% for achievement in all_achievements %}
+		{% if achievement.1 %}
+			<p>{{ achievement.0|to_achievement_link }}
+			{% if achievement.2 > 1 %} <span class="badge">{{ achievement.2 }}</span> {% endif %}
+			, last achieved on {{ achievement.1.date }}</p>
+		{% else %}
+			<p class="disabled">{{ achievement.0|to_achievement_link }}</p>
+		{% endif %}
+    {% endfor %}
+  </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,54 @@
+{% extends 'achievements/base.html' %}
+{% load template_filters %}
+
+{% block title %} - Achievement details{% endblock %}
+
+---------------
+
+{% block header %}
+
+<div class="pull-left">
+<h2>{{ achievement.name }}</h2>
+<h4>{{ achievement.description|replace_tags }}</h4>
+</div>
+
+{% endblock %}
+
+---------------
+
+{% block content %}
+
+<!-- Nav tabs -->
+<ul class="nav nav-pills" role="tablist">
+  <li class="active"><a href="#home" role="tab" data-toggle="pill">Latest rewards</a></li>
+  <li><a href="#profile" role="tab" data-toggle="pill">By number of rewards</a></li>
+</ul>
+
+<div class="tab-content">
+  <div class="tab-pane active" id="home">
+{% if latest_rewardings %}
+    <ul>
+    {% for rewarding in latest_rewardings %}
+        <li>
+			{{ rewarding.date }}:
+			{{ rewarding.participant|to_user_link }}
+			got {{ rewarding.achievement|to_achievement_link }}
+			for {{ rewarding.comment|replace_tags }}
+		</li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>There are no achievements here yet.</p>
+{% endif %}
+  </div>
+  
+  <div class="tab-pane" id="profile">
+    {% for rewarding in by_number %}
+		<p>{{ rewarding.participant|to_user_link }}
+		&mdash; <span class="badge">{{ rewarding.count }}</span>,
+		first achieved on {{ rewarding.first_date }}</p>
+    {% endfor %}
+  </div>
+</div>
+
+{% endblock %}

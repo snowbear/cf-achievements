@@ -24,6 +24,21 @@ def get_color_style(rating):
     else:
         return "user-gray"
 
+rank_limits = [ (2600, "International Grandmaster") ,
+                (2200, "Grandmaster") ,
+                (2050, "International master"),
+                (1900, "Master"),
+                (1700, "Candidate"),
+                (1500, "Expert"),
+                (1350, "Specialist"),
+                (1200, "Pupil"),
+                (None, "Newbie")]
+        
+def get_rank(rating):
+    for pair in rank_limits:
+        if pair[0] == None or pair[0] <= rating:
+            return pair[1]
+        
 def link(destination, text, cssClass = None):
     classAttribute = ""
     if cssClass != None:
@@ -33,9 +48,15 @@ def link(destination, text, cssClass = None):
 def get_user_link(user):
     if type(user) is str:
         user = Contestant.objects.get(handle = user)
+    elif type(user) is int:
+        user = Contestant.objects.get(pk = user)
     cssClass = "rated-user %s" % get_color_style(user.rating)
     return link(reverse('achievements:profile', args=[user.handle]), user.handle, cssClass)
 
+@register.filter()
+def to_user_rank(user):
+    return mark_safe(get_rank(user.rating))
+    
 @register.filter()
 def to_user_link(user):
     return mark_safe(get_user_link(user))
@@ -46,7 +67,7 @@ def get_contest_link(contestId):
 
 @register.filter()
 def to_achievement_link(achievement):
-    return mark_safe(link('#', achievement.name, 'achievement-link'))
+    return mark_safe(link(reverse('achievements:achievement', args=[achievement.id]), achievement.name, 'achievement-link'))
 
 @register.filter()
 def replace_tags(input):

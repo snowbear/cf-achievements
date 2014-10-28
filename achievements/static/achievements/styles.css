@@ -10,3 +10,7 @@ body {
 .achievement-link {
 	font-weight:bold;
 }
+
+p.disabled  a {
+	color: lightgray !important;
+}
