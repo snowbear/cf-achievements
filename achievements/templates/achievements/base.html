@@ -28,7 +28,7 @@
     <script src="{% static 'achievements/jquery-ui-1.11.2/jquery-ui.js' %}"></script>
 	<script type="text/javascript">
 		$(document).ready(function() {
-				$( "#user_search" ).autocomplete({	minLength: 3, 
+				$( ".user-search" ).autocomplete({	minLength: 3, 
 													delay: 500 , 
 													source: "{% url 'achievements:search_user' %}?ajax=true",
 													select: function(event, ui) {
@@ -51,7 +51,7 @@
 			<div class="navbar-collapse collapse">
 				<form class="navbar-form navbar-right" role="form" class="form-group" action="{% url 'achievements:search_user' %}" method="GET">
 					<span class="glyphicon glyphicon-search" style="color:lightgray"></span>
-					<input id="user_search" name="term" type="text" placeholder="User search" class="form-control"></input>
+					<input name="term" type="text" placeholder="User search" class="form-control user-search"></input>
 				</form>
 			</div>
 		</div>

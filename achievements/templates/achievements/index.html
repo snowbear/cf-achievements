@@ -6,6 +6,12 @@
 {% block header %}
 <h2>Codeforces achievements</h2>
 <h3>Did something cool on Codeforces? Get your reward here!</h3>
+<h3>
+	<form class="form-inline" action="{% url 'achievements:search_user' %}" method="GET">
+		Type in your handle to check your achivements:
+		<input name="term" type="text" placeholder="User search" class="form-control user-search"></input>
+	</form>
+</h3>
 {% endblock %}
 
 ---------------
