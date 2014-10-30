@@ -1,9 +1,12 @@
+import json
+
 from collections import defaultdict
 from itertools import *
 
+from django.core.urlresolvers import reverse
 from django.db.models import *
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 
 from achievements.models import *
 
@@ -68,3 +71,19 @@ def achievement(request, achievementId):
                         'latest_rewardings': latest_rewardings,
                         'by_number': by_number,
                   })
+
+def search_user(request):
+    term = request.GET['term']
+    matching_users = Contestant.objects.filter(handle__contains = term).order_by("handle")
+    if request.GET.get("ajax", "") == "true":
+        handles = [u.handle for u in matching_users[:20]]
+        return HttpResponse(json.dumps(handles))
+    else:
+        for user in matching_users:
+            if user.handle == term:
+                return HttpResponseRedirect(reverse('achievements:profile', args=[user.handle]))
+        return render(request,
+                      'achievements/search_user.html', {
+                            'matching_users': matching_users,
+                            'query': term,
+                      })

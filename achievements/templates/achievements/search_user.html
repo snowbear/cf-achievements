@@ -1,0 +1,24 @@
+{% extends 'achievements/base.html' %}
+{% load template_filters %}
+
+{% block title %} - Search results {% endblock %}
+
+{% block header %}
+<h2>User search results</h2>
+{% endblock %}
+
+{% block content %}
+
+{% if matching_users %}
+    <ul>
+    {% for user in matching_users %}
+		<li>
+        {{ user|to_user_link }}
+		</li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>There are no users matching the query.</p>
+{% endif %}
+
+{% endblock %}
