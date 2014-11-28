@@ -2,7 +2,7 @@ import datetime
 import json
 
 from django.db import connection
-from django.db.models import Min
+from django.db.models import *
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
@@ -12,7 +12,7 @@ from achievements.achievement_data import *
 from data_management.models import *
 
 def index(request):
-    last_contest = Contest.objects.order_by('-id').first()
+    last_contest = Contest.objects.order_by('-order').first()
     
     achievements = [{'achievement': a, 'last_parsed': AchievementParseProgress_ByContest.get_for_achievement(a.id)} for a in Achievement.objects.all()]
     
@@ -44,7 +44,10 @@ def save_contest(request):
     name = request.POST['name']
     timestamp = int(request.POST['startTime'])
     date = datetime.datetime.fromtimestamp(timestamp)
-    Contest.objects.create(id = id, name = name, date = date)
+    order = 1
+    if Contest.objects.count() > 0:
+        order = 1 + Contest.objects.all().aggregate(max_order = Max('order'))['max_order']
+    Contest.objects.create(id = id, name = name, date = date, order = order)
     return HttpResponseRedirect(reverse('data:load-contests'))
 
 achievement_id_to_loader_name_mapping = {
@@ -57,10 +60,10 @@ achievement_id_to_loader_name_mapping = {
 def update_achievement(request, achievementId):
     state = AchievementParseProgress_ByContest.get_for_achievement(achievementId)
     if state.lastParsedContest == None:
-        minContestId = Contest.objects.all().aggregate(minId = Min('id'))['minId']
+        minContestOrder = Contest.objects.all().aggregate(minOrder = Min('order'))['minOrder']
     else:
-        minContestId = state.lastParsedContest.id + 1
-    contest = Contest.objects.filter(id__gte = minContestId).order_by('id').first()
+        minContestOrder = state.lastParsedContest.order + 1
+    contest = Contest.objects.filter(order__gte = minContestOrder).order_by('order').first()
     if contest == None:
         return HttpResponseRedirect(reverse('data:index'))
     return render(request,
@@ -75,7 +78,7 @@ def save_contest_achievement(request):
     contest = Contest.objects.get(pk = contestId)
     achievementId = int(request.POST['achievementId'])
     parseState = AchievementParseProgress_ByContest.get_for_achievement(achievementId)
-    if parseState.lastParsedContest != None and parseState.lastParsedContest.id >= contest.id:
+    if parseState.lastParsedContest != None and parseState.lastParsedContest.order >= contest.order:
         return HttpResponse("Contest %d is already loaded for achievement id = %d" % (contestId, achievementId))
     achievements = json.loads(request.POST['resultData'])
     achievement = Achievement.objects.get(pk = achievementId)
