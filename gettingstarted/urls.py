@@ -6,6 +6,5 @@ admin.autodiscover()
 urlpatterns = patterns('',
     url(r'^', include('achievements.urls', namespace="achievements")),
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^polls/', include('polls.urls', namespace="polls")),
     url(r'^data-management/', include('data_management.urls', namespace="data")),
 )
