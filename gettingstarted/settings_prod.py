@@ -7,8 +7,9 @@ DATABASES['default'] =  dj_database_url.config()
 
 WSGI_APPLICATION = 'gettingstarted.wsgi_cling.application'
 
+STATIC_BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 STATIC_ROOT = 'staticfiles'
 STATIC_URL = '/static/'
 STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'static'),
+    os.path.join(STATIC_BASE_DIR, 'static'),
 )
