@@ -13,7 +13,3 @@ class AchievementParseProgress_ByContest(models.Model):
     def get_for_achievement(achievementId):
         achievement_obj = get_object_or_404(Achievement, pk = achievementId)
         return AchievementParseProgress_ByContest.objects.get_or_create(achievement = achievement_obj)[0]
-
-class temp_user_rating(models.Model):
-    tmp_handle = models.CharField(max_length=200, primary_key = True)
-    tmp_rating = models.IntegerField()

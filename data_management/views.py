@@ -104,12 +104,19 @@ def ratings_save(request):
     existing_handles.update([c.handle for c in Contestant.objects.all()])
     missing_ids = [c['handle'] for c in data if not (c['handle'] in existing_handles)]
     Contestant.objects.bulk_create([Contestant(handle = h) for h in missing_ids])
-    
-    temp_user_rating.objects.all().delete()
-    temp_user_rating.objects.bulk_create([temp_user_rating(tmp_handle = h['handle'], tmp_rating = h['rating']) for h in data])
-    
+
+    query = """
+    UPDATE achievements_contestant as c
+    SET rating = s.rating
+    FROM (
+        SELECT * 
+        FROM ( VALUES 
+        """ + ",".join(["('%s',%d)" % (h['handle'], h['rating']) for h in data]) + """
+        ) AS x(handle, rating)
+    )s
+    where c.handle = s.handle
+    """
     cursor = connection.cursor()
-    cursor.execute("update achievements_contestant set rating = (select tmp_rating from data_management_temp_user_rating where tmp_handle = handle)")
-    temp_user_rating.objects.all().delete()
+    cursor.execute(query)
+    
     return HttpResponseRedirect(reverse('data:index'))
-  
