@@ -14,3 +14,7 @@ body {
 p.disabled  a {
 	color: lightgray !important;
 }
+
+.tab-pane {
+	margin-top: 20px;
+}
