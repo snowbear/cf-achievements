@@ -1,3 +1,9 @@
+if (typeof String.prototype.startsWith != 'function') {
+  String.prototype.startsWith = function (str){
+    return this.slice(0, str.length) == str;
+  };
+}
+
 function groupBy(array, groupingFields) {
 	var result = { };
 	
@@ -24,9 +30,14 @@ function user_tag(handle) {
 	return "[user:" + handle + "]";
 }
 
-function get_main_handle(party) {
-	console.assert(party.members.length == 1);
-	return party.members[0].handle;
+function get_main_handle(obj) {
+	if (!is_undefined(obj.members)) {
+		console.assert(obj.members.length == 1);
+		return obj.members[0].handle;
+	}
+	if (!is_undefined(obj.author)) return get_main_handle(obj.author);
+	
+	throw "Cannot extract handle from the object: " + obj;
 }
 
 function is_online_participant(party) {

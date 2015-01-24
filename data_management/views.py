@@ -50,13 +50,22 @@ def save_contest(request):
     Contest.objects.create(id = id, name = name, date = date, order = order)
     return HttpResponseRedirect(reverse('data:load-contests'))
 
-achievement_id_to_loader_name_mapping = {
+def is_language_expert_achievement(achievement):
+    if type(achievement) is Achievement:
+        achievement = achievement.id
+    return 100 <= achievement < 200
+    
+def get_loader_name(achievementId):
+    achievementId = int(achievementId)
+    if is_language_expert_achievement(achievementId):
+        return 'language_expert'
+    return {
         DID_NOT_SCRATCH_ME.id: 'did_not_scratch_me',
         PERESVET.id: 'peresvet',
         POLYGLOT.id: 'polyglot',
         LANGUAGE_DOES_NOT_MATTER.id: 'language_does_not_matter',
-    };
-
+    }[achievementId]
+    
 def update_achievement(request, achievementId):
     state = AchievementParseProgress_ByContest.get_for_achievement(achievementId)
     if state.lastParsedContest == None:
@@ -70,9 +79,75 @@ def update_achievement(request, achievementId):
                   'data_management/load-achievement.html', {
                       'contestId': contest.id,
                       'achievementId': achievementId,
-                      'loader_name': achievement_id_to_loader_name_mapping[int(achievementId)],
+                      'loader_name': get_loader_name(achievementId),
                 })
 
+def execute_sql(sql):
+    cursor = connection.cursor()
+    cursor.execute(sql)
+    return cursor
+                
+to_contestant_id_map = { }
+    
+def to_contestant_id(handle):
+    if len(to_contestant_id_map) == 0:
+        for c in Contestant.objects.all():
+            to_contestant_id_map[c.handle] = c.id
+    if not handle in to_contestant_id_map:
+        contestant = Contestant.objects.get_or_create(handle = handle)[0]
+        to_contestant_id_map[handle] = contestant.id
+    return to_contestant_id_map[handle]
+    
+def get_accumulative_achievement_requirement(achievement):
+    if is_language_expert_achievement(achievement):
+        return problems_for_language_achievement
+    raise Exception("Cannot get accumulative achievement requirement for achievementId: %d" % achievementId)
+    
+def save_accumulative_achievements(achievement, contest, data):
+    if len(data) == 0:
+        return
+
+    values_str = ",".join(["(%d,%d,%d)" % (achievement.id, to_contestant_id(h['handle']), h['level']) for h in data])
+    values_str = "(VALUES %s) AS x(a_id, c_id, p)" % values_str
+    
+    update_query = """
+        UPDATE data_management_achievement_contestant_progress
+        SET progress = progress + s.p
+        FROM ( SELECT * FROM %s )s
+        WHERE achievement_id = a_id AND contestant_id = c_id AND progress <> -1
+    """ % values_str
+    
+    execute_sql(update_query)
+    
+    insert_query = """
+        INSERT INTO data_management_achievement_contestant_progress
+        SELECT * FROM %s
+        WHERE NOT EXISTS (
+                SELECT 1 FROM data_management_achievement_contestant_progress WHERE achievement_id=a_id AND contestant_id = c_id
+            );
+    """ % values_str
+    
+    execute_sql(insert_query)
+    
+    requirement = get_accumulative_achievement_requirement(achievement)
+    
+    select_query = "SELECT contestant_id FROM data_management_achievement_contestant_progress WHERE progress >= %d" % requirement
+    
+    language_achievement_class = get_language_achievement_class(achievement)
+    
+    for row in execute_sql(select_query):
+        contestant = Contestant.objects.get(pk = row[0])
+        comment = language_achievement_class.award_comment
+        Rewarding.objects.create(participant = contestant, achievement = achievement, comment = comment, date = contest.date, contest = contest)
+    
+    promote_achievers_query = """
+        UPDATE data_management_achievement_contestant_progress
+        SET progress = -1
+        WHERE progress >= %d AND achievement_id = %d
+    """ % (requirement , achievement.id)
+    
+    execute_sql(promote_achievers_query)
+                
 def save_contest_achievement(request):
     contestId = int(request.POST['contestId'])
     contest = Contest.objects.get(pk = contestId)
@@ -82,15 +157,20 @@ def save_contest_achievement(request):
         return HttpResponse("Contest %d is already loaded for achievement id = %d" % (contestId, achievementId))
     achievements = json.loads(request.POST['resultData'])
     achievement = Achievement.objects.get(pk = achievementId)
-    for data in achievements:
-        handle = data['handle']
-        comment = data['comment']
-        level = None
-        if 'level' in data:
-            level = data['level']
+    
+    if is_language_expert_achievement(achievement): # this condition should be more generic
+        save_accumulative_achievements(achievement , contest, achievements)
+    else:
+        for data in achievements:
+            handle = data['handle']
+            comment = data['comment']
+            level = None
+            if 'level' in data:
+                level = data['level']
 
-        contestant = Contestant.objects.get_or_create(handle = handle)[0]
-        Rewarding.objects.create(participant = contestant, achievement = achievement, comment = comment, date = contest.date, contest = contest, level = level)
+            contestant = Contestant.objects.get_or_create(handle = handle)[0]
+            Rewarding.objects.create(participant = contestant, achievement = achievement, comment = comment, date = contest.date, contest = contest, level = level)
+
     parseState.lastParsedContest = contest
     parseState.save()
     return HttpResponseRedirect(reverse('data:update-achievement', args = [achievementId]))

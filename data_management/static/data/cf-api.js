@@ -26,6 +26,116 @@ var hack_verdict = {
 	unsuccessful: 'HACK_UNSUCCESSFUL',
 };
 
+var languages = {
+	GnuC: "GNU C",
+	GnuCpp: "GNU C++",
+	GnuCpp0x: "GNU C++0x",
+	GnuCpp11: "GNU C++11",
+	MsCpp: "MS C++",
+	CSharpMs: "MS C#",
+	CSharpMono: "Mono C#",
+	D: "D",
+	Go: "Go",
+	Haskell: "Haskell",
+	Java6: "Java 6",
+	Java7: "Java 7",
+	Java8: "Java 8",
+	Ocaml: "Ocaml",
+	Delphi: "Delphi",
+	FreePascal: "FPC",
+	Perl: "Perl",
+	PHP: "PHP",
+	Python2: "Python 2",
+	Python3: "Python 3",
+	Ruby: "Ruby",
+	Scala: "Scala",
+	JavaScript: "JavaScript",
+	FSharp: "F#",
+	
+	Tcl: "Tcl",
+	Io: "Io",
+	Pike: "Pike",
+	Befunge: "Befunge",
+	Cobol: "Cobol",
+	Ada: "Ada",
+	Factor: "Factor",
+	Roco: "Roco",
+	FALSE: "FALSE",
+	MysteriousLanguage: "Mysterious Language",
+};
+
+var language_group = {
+	C: 'C',
+	Cpp: 'C++',
+	CSharp: 'C#',
+	D: 'D',
+	Go: 'Go',
+	Haskell: 'Haskell',
+	Java: 'Java',
+	Ocaml: 'Ocaml',
+	Delphi: 'Delphi',
+	Pascal: 'Pascal',
+	Perl: 'Perl',
+	PHP: 'PHP',
+	Python: 'Python',
+	Ruby: 'Ruby',
+	Scala: 'Scala',
+	JavaScript: 'JavaScript',
+	FSharp: 'F#',
+	Esoteric: 'Esoteric',
+};
+
+var language_to_group_mapping;
+
+function get_language_group(language) {
+	if (is_undefined(language_to_group_mapping)) {
+		language_to_group_mapping = { };
+		language_to_group_mapping[languages.GnuC] = language_group.C;
+		language_to_group_mapping[languages.GnuCpp] = language_group.Cpp;
+		language_to_group_mapping[languages.GnuCpp0x] = language_group.Cpp;
+		language_to_group_mapping[languages.GnuCpp11] = language_group.Cpp;
+		language_to_group_mapping[languages.MsCpp] = language_group.Cpp;
+		language_to_group_mapping[languages.CSharpMs] = language_group.CSharp;
+		language_to_group_mapping[languages.CSharpMono] = language_group.CSharp;
+		language_to_group_mapping[languages.D] = language_group.D;
+		language_to_group_mapping[languages.Go] = language_group.Go;
+		language_to_group_mapping[languages.Haskell] = language_group.Haskell;
+		language_to_group_mapping[languages.Java6] = language_group.Java;
+		language_to_group_mapping[languages.Java7] = language_group.Java;
+		language_to_group_mapping[languages.Java8] = language_group.Java;
+		language_to_group_mapping[languages.Ocaml] = language_group.Ocaml;
+		language_to_group_mapping[languages.Delphi] = language_group.Pascal;
+		language_to_group_mapping[languages.FreePascal] = language_group.Pascal;
+		language_to_group_mapping[languages.Perl] = language_group.Perl;
+		language_to_group_mapping[languages.PHP] = language_group.PHP;
+		language_to_group_mapping[languages.Python2] = language_group.Python;
+		language_to_group_mapping[languages.Python3] = language_group.Python;
+		language_to_group_mapping[languages.Ruby] = language_group.Ruby;
+		language_to_group_mapping[languages.Scala] = language_group.Scala;
+		language_to_group_mapping[languages.JavaScript] = language_group.JavaScript;
+		language_to_group_mapping[languages.FSharp] = language_group.FSharp;
+		
+		language_to_group_mapping[languages.Tcl] = language_group.Esoteric;
+		language_to_group_mapping[languages.Io] = language_group.Esoteric;
+		language_to_group_mapping[languages.Pike] = language_group.Esoteric;
+		language_to_group_mapping[languages.Befunge] = language_group.Esoteric;
+		language_to_group_mapping[languages.Cobol] = language_group.Esoteric;
+		language_to_group_mapping[languages.Ada] = language_group.Esoteric;
+		language_to_group_mapping[languages.Factor] = language_group.Esoteric;
+		language_to_group_mapping[languages.Roco] = language_group.Esoteric;
+		language_to_group_mapping[languages.FALSE] = language_group.Esoteric;
+		language_to_group_mapping[languages.MysteriousLanguage] = language_group.Esoteric;
+	}
+	
+	if (language.startsWith("Secret_")) return language_group.Esoteric;
+	
+	if (is_undefined(language_to_group_mapping[language])) {
+		throw 'There is no group for language: ' + language;
+	}
+
+	return language_to_group_mapping[language];
+}
+
 function make_api_call(method, parameters, callback) {
 	var callerName = arguments.callee.caller.name;
 
