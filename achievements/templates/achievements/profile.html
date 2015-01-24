@@ -8,7 +8,7 @@
 {% block header %}
 
 <div class="pull-left">
-<h2>{{ user|to_user_rank }} {{ user|to_user_link }}</h2>
+<h2 class="{{ user.rating|get_color_style }}">{{ user|to_user_rank }} {{ user|to_user_link }}</h2>
 <h3>Contest rating: {{ user.rating }} </h3>
 <h3>Total achievements: {{ achievements|length }} </h3>
 <h3>Achievements unlocked: {{ achievements_unlocked }} / {{ all_achievements|length }} </h3>

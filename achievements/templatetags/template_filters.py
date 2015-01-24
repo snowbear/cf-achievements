@@ -8,6 +8,7 @@ from achievements.models import *
 
 register = template.Library()
 
+@register.filter()
 def get_color_style(rating):
     if rating == None:
         return "user-black"
@@ -28,7 +29,7 @@ rank_limits = [ (2600, "International Grandmaster") ,
                 (2200, "Grandmaster") ,
                 (2050, "International master"),
                 (1900, "Master"),
-                (1700, "Candidate"),
+                (1700, "Candidate Master"),
                 (1500, "Expert"),
                 (1350, "Specialist"),
                 (1200, "Pupil"),
