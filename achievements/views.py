@@ -74,7 +74,7 @@ def achievement(request, achievementId):
 
 def search_user(request):
     term = request.GET['term']
-    matching_users = Contestant.objects.filter(handle__contains = term).order_by("handle")
+    matching_users = Contestant.objects.filter(handle__icontains = term).order_by("handle")
     if request.GET.get("ajax", "") == "true":
         handles = [u.handle for u in matching_users[:20]]
         return HttpResponse(json.dumps(handles))
