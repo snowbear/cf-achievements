@@ -4,7 +4,10 @@
 {% block title %} - Contest results{% endblock %}
 
 {% block header %}
-<h2>{{contest.name}}</h2>
+<h2>
+	{{contest.name}}
+	<a href="http://codeforces.com/contest/{{ contest.id }}"><sup class="link-to-cf">&#10150;CF</sup></a>
+</h2>
 {% endblock %}
 
 {% block content %}

@@ -8,11 +8,15 @@
 {% block header %}
 
 <div class="pull-left">
-<h2 class="{{ user.rating|get_color_style }}">{{ user|to_user_rank }} {{ user|to_user_link }}</h2>
+<h2 class="{{ user.rating|get_color_style }}">
+	{{ user|to_user_rank }} {{ user|to_user_link }}
+	<a href="http://codeforces.com/profile/{{ user.handle }}"><sup class="link-to-cf">&#10150;CF</sup></a>
+</h2>
 <h3>Contest rating: {{ user.rating }} </h3>
 <h3>Total achievements: {{ achievements|length }} </h3>
 <h3>Achievements unlocked: {{ achievements_unlocked }} / {{ all_achievements|length }} </h3>
 </div>
+
 
 <div class="pull-right">
 	<img src='http://codeforces.ru/userphoto/title/{{user.handle}}/photo.jpg'></img>
