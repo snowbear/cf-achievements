@@ -6,11 +6,13 @@ from django.db.models import *
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
 
 from achievements.models import *
 from achievements.achievement_data import *
 from data_management.models import *
 
+@login_required
 def index(request):
     last_contest = Contest.objects.order_by('-order').first()
     
@@ -24,9 +26,8 @@ def index(request):
                       'last_contest': last_contest,
                       'achievements': achievements,
                     });
-                    
-    return HttpResponse(question.question_text)
 
+@login_required
 def load_contests(request):
     contests = Contest.objects.all()
     contest_ids = [c.id for c in contests]
@@ -36,6 +37,7 @@ def load_contests(request):
                       })
     return HttpResponse(', '.join([str(c.id) for c in contests]))
 
+@login_required
 def save_contest(request):
     id = int(request.POST['id'])
     if id == -1:
@@ -66,6 +68,7 @@ def get_loader_name(achievementId):
         LANGUAGE_DOES_NOT_MATTER.id: 'language_does_not_matter',
     }[achievementId]
     
+@login_required
 def update_achievement(request, achievementId):
     state = AchievementParseProgress_ByContest.get_for_achievement(achievementId)
     if state.lastParsedContest == None:
@@ -148,6 +151,7 @@ def save_accumulative_achievements(achievement, contest, data):
     
     execute_sql(promote_achievers_query)
                 
+@login_required
 def save_contest_achievement(request):
     contestId = int(request.POST['contestId'])
     contest = Contest.objects.get(pk = contestId)
@@ -175,9 +179,11 @@ def save_contest_achievement(request):
     parseState.save()
     return HttpResponseRedirect(reverse('data:update-achievement', args = [achievementId]))
 
+@login_required
 def ratings_update(request):
     return render(request, 'data_management/update-ratings.html', None)
 
+@login_required
 def ratings_save(request):
     data = json.loads(request.POST['resultData'])
     existing_handles = set()
