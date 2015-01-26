@@ -40,11 +40,13 @@ def get_rank(rating):
         if pair[0] == None or pair[0] <= rating:
             return pair[1]
         
-def link(destination, text, cssClass = None):
-    classAttribute = ""
+def link(destination, text, cssClass = None, title = None):
+    attributes = ""
     if cssClass != None:
-        classAttribute = "class='%s'" % cssClass;
-    return "<a href='%s' %s>%s</a>" % (destination, classAttribute, text)
+        attributes = attributes + " class='%s'" % cssClass;
+    if title != None:
+        attributes = attributes + " title='%s'" % title;
+    return "<a href='%s' %s>%s</a>" % (destination, attributes, text)
         
 def get_user_link(user):
     if type(user) is str:
@@ -68,7 +70,23 @@ def get_contest_link(contestId):
 
 @register.filter()
 def to_achievement_link(achievement):
-    return mark_safe(link(reverse('achievements:achievement', args=[achievement.id]), achievement.name, 'achievement-link'))
+    return mark_safe(link(reverse('achievements:achievement', args=[achievement.id]), achievement.name, 'achievement-link', title = strip_tags(achievement.description)))
+
+def strip_tags(input):
+    result = ""
+    nextChar = 0
+    for match in re.finditer(r"\[(contest|user):([^\]]+)\]", input):
+        result += input[nextChar:match.span()[0]]
+        if match.group(1) == "contest":
+            contestId = int(match.group(2))
+            contest = Contest.objects.get(pk = contestId)
+            result += contest.name
+        elif match.group(1) == "user":
+            handle = match.group(2)
+            result += handle
+        nextChar = match.span()[1]
+    result += input[nextChar:]
+    return mark_safe(result)
 
 @register.filter()
 def replace_tags(input):
