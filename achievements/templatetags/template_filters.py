@@ -36,6 +36,8 @@ rank_limits = [ (2600, "International Grandmaster") ,
                 (None, "Newbie")]
         
 def get_rank(rating):
+    if rating == None:
+        return "Not in rating"
     for pair in rank_limits:
         if pair[0] == None or pair[0] <= rating:
             return pair[1]
