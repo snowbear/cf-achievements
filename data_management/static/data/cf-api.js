@@ -3,6 +3,19 @@ var cfapi_data = {};
 
 var submission_verdict = {
 	ok: 'OK',
+	wrong_answer: 'WRONG_ANSWER',
+	presentation_error: 'PRESENTATION_ERROR',
+	time_limit_exceeded: 'TIME_LIMIT_EXCEEDED',
+	memory_limit_exceeded: 'MEMORY_LIMIT_EXCEEDED',
+	idleness_limit_exceeded: 'IDLENESS_LIMIT_EXCEEDED',
+	challenged: 'CHALLENGED',
+};
+
+submission_testset = {
+	 samples: 'SAMPLES', 
+	 pretests: 'PRETESTS', 
+	 tests: 'TESTS', 
+	 challenges: 'CHALLENGES',
 };
 
 var participant_type = {

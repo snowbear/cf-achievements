@@ -66,6 +66,7 @@ def get_loader_name(achievementId):
         PERESVET.id: 'peresvet',
         POLYGLOT.id: 'polyglot',
         LANGUAGE_DOES_NOT_MATTER.id: 'language_does_not_matter',
+        SPECK_IN_YOUR_BROTHERS_EYE.id: 'speck_in_your_brothers_eye',
     }[achievementId]
     
 @login_required

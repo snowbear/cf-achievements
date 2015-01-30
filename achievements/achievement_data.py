@@ -18,6 +18,11 @@ class LANGUAGE_DOES_NOT_MATTER:
     name = "Language does not matter"
     description = "Solve at least two problems in Unknown Language Round"
 
+class SPECK_IN_YOUR_BROTHERS_EYE:
+    id = 5
+    name = "Speck in your brother's eye"
+    description = "Hack somebody's solution and get your own solution failed during system tests on the same problem."
+
 problems_for_language_achievement = 50
 
 def get_language_achievement_description(language):
