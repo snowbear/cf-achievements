@@ -9,6 +9,7 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 
 from achievements.models import *
+from achievements.achievement_data import *
 
 def index(request):
     last_achievements = Rewarding.objects.order_by("-date")[:20]
@@ -65,12 +66,15 @@ def achievement(request, achievementId):
     by_number = Rewarding.objects.filter(achievement = achievement).values('participant') \
                                     .annotate(count = Count('id'), first_date = Min('date')) \
                                     .order_by('-count')[:20]
-    return render(request,
-                  'achievements/achievement.html', {
+    context = {
                         'achievement': achievement,
                         'latest_rewardings': latest_rewardings,
                         'by_number': by_number,
-                  })
+              }
+    if achievement.id == POLYGLOT.id:
+        context['by_level'] = Rewarding.objects.filter(achievement = achievement) \
+                                    .order_by('-level', 'date')[:30]
+    return render(request, 'achievements/achievement.html', context)
 
 def search_user(request):
     term = request.GET['term']

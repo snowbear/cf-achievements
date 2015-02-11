@@ -21,7 +21,8 @@
 <!-- Nav tabs -->
 <ul class="nav nav-pills" role="tablist">
   <li class="active"><a href="#home" role="tab" data-toggle="pill">Latest rewards</a></li>
-  <li><a href="#profile" role="tab" data-toggle="pill">By number of rewards</a></li>
+  <li><a href="#by_number" role="tab" data-toggle="pill">By number of rewards</a></li>
+{% if by_level %}  <li><a href="#by_level" role="tab" data-toggle="pill">By level</a></li> {% endif %}
 </ul>
 
 <div class="tab-content">
@@ -42,13 +43,24 @@
 {% endif %}
   </div>
   
-  <div class="tab-pane" id="profile">
+  <div class="tab-pane" id="by_number">
     {% for rewarding in by_number %}
 		<p>{{ rewarding.participant|to_user_link }}
 		&mdash; <span class="badge">{{ rewarding.count }}</span>,
 		first achieved on {{ rewarding.first_date }}</p>
     {% endfor %}
   </div>
+  
+{% if by_level %}
+  <div class="tab-pane" id="by_level">
+    {% for rewarding in by_level %}
+		<p>{{ rewarding.participant|to_user_link }}
+		&mdash; <span class="badge">{{ rewarding.level }}</span>,
+		received on {{ rewarding.date }} for {{ rewarding.comment|replace_tags }}
+		</p>
+    {% endfor %}
+  </div>
+{% endif %}
 </div>
 
 {% endblock %}
