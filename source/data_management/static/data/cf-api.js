@@ -64,6 +64,8 @@ var languages = {
 	Scala: "Scala",
 	JavaScript: "JavaScript",
 	FSharp: "F#",
+	PyPy2: "PyPy 2",
+	PyPy3: "PyPy 3",
 	
 	Tcl: "Tcl",
 	Io: "Io",
@@ -127,6 +129,8 @@ function get_language_group(language) {
 		language_to_group_mapping[languages.Scala] = language_group.Scala;
 		language_to_group_mapping[languages.JavaScript] = language_group.JavaScript;
 		language_to_group_mapping[languages.FSharp] = language_group.FSharp;
+		language_to_group_mapping[languages.PyPy2] = language_group.Python;
+		language_to_group_mapping[languages.PyPy3] = language_group.Python;
 		
 		language_to_group_mapping[languages.Tcl] = language_group.Esoteric;
 		language_to_group_mapping[languages.Io] = language_group.Esoteric;
