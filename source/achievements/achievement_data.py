@@ -33,7 +33,7 @@ def get_award_comment(language):
     
 class LANGUAGE_ACHIEVEMENT_C:
     id = 100
-    name = "See the solution"
+    name = "/usr/dmr"
     lang = "C"
     description = get_language_achievement_description(lang)
     award_comment = get_award_comment(lang)
