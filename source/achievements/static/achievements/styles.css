@@ -11,7 +11,7 @@ body {
 	font-weight:bold;
 }
 
-p.disabled  a {
+p.disabled  a, p.disabled {
 	color: lightgray !important;
 }
 

@@ -10,6 +10,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 
 from achievements.models import *
 from achievements.achievement_data import *
+from helpers.sql import *
 
 def index(request):
     last_achievements = Rewarding.objects.order_by("-date")[:20]
@@ -20,14 +21,14 @@ def index(request):
                         'achievements': achievements,
                   })
 
-def to_stat_row(achievement, grouped_rewardings):
+def to_stat_row(achievement, grouped_rewardings, progress):
     latest_rewarding = None
     total_count = 0
     if grouped_rewardings[achievement.id] != None:
         rewardings = grouped_rewardings[achievement.id]
         latest_rewarding = max(rewardings, key=lambda rewarding: rewarding.date)
         total_count = len(rewardings)
-    return (achievement, latest_rewarding, total_count)
+    return (achievement, latest_rewarding, total_count , progress.get(achievement.id))
                   
 def profile(request, handle):
     contestant = Contestant.objects.get(handle = handle)
@@ -40,8 +41,19 @@ def profile(request, handle):
     
     achievements_unlocked = len(grouped_rewardings)
     
+    achievement_progress = dict()
+    
+    progress_entries = execute_sql('''
+                    SELECT achievement_id , SUM(progress)
+                    FROM data_management_achievement_contestant_progress_by_contest
+                    WHERE contestant_id = %s group by achievement_id
+                ''', [ contestant.id ] )
+    
+    for row in progress_entries:
+        achievement_progress[row[0]] = ( row[1] , problems_for_language_achievement )
+    
     all_achievements = Achievement.objects.order_by("name")
-    all_achievements = [ to_stat_row(a, grouped_rewardings) for a in all_achievements]
+    all_achievements = [ to_stat_row(a, grouped_rewardings, achievement_progress) for a in all_achievements]
     
     return render(request,
                   'achievements/profile.html', {

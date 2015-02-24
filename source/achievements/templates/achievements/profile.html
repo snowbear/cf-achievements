@@ -58,7 +58,12 @@
 			{% if achievement.2 > 1 %} <span class="badge">{{ achievement.2 }}</span> {% endif %}
 			, last achieved on {{ achievement.1.date }}</p>
 		{% else %}
-			<p class="disabled">{{ achievement.0|to_achievement_link }}</p>
+			<p class="disabled">
+				{{ achievement.0|to_achievement_link }}
+				{% if achievement.3 %}
+					({{ achievement.3.0 }} / {{ achievement.3.1 }} completed)
+				{% endif %}
+			</p>
 		{% endif %}
     {% endfor %}
   </div>
