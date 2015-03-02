@@ -7,7 +7,6 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('achievements', '0011_add_speck_in_your_brothers_eye'),
         ('data_management', '0004_achievement_contestant_progress'),
     ]
 
