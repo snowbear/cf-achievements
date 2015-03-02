@@ -9,7 +9,7 @@ from data_management.models import *
 
 from cf_api import *
 from cf_api_enums import *
-from helpers import *
+from crawling_helpers import *
 
 def filter_hack(js):
     return is_cool_participant(js['hacker']) and \

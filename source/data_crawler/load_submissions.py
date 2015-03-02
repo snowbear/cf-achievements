@@ -9,28 +9,14 @@ from data_management.models import *
 
 from cf_api import *
 from cf_api_enums import *
+from crawling_helpers import *
 
 def filter_submission(js):
-    pt = participant_type_mapping[js['author']['participantType']]
-    return \
-        len(js['author']['members']) == 1 and \
-        not js['author']['ghost'] and \
-        (pt == PARTICIPANT_TYPE.CONTESTANT or pt == PARTICIPANT_TYPE.OUT_OF_COMPETITION)
-
-class STATIC:        
-    to_contestant_id_map = { }
-    
-def to_contestant_id(handle):
-    if len(STATIC.to_contestant_id_map) == 0:
-        STATIC.to_contestant_id_map = dict( (c.handle , c) for c in Contestant.objects.all() )
-    if not handle in STATIC.to_contestant_id_map:
-        contestant = Contestant.objects.get_or_create(handle = handle)[0]
-        STATIC.to_contestant_id_map[handle] = contestant
-    return STATIC.to_contestant_id_map[handle]
+    return is_cool_participant(js['author'])
 
 def to_submission(contest, problems, js):
-    handle = js['author']['members'][0]['handle']
-    author = to_contestant_id(handle)   
+    handle = get_main_handle(js['author'])
+    author = get_contestant_by_handle(handle)   
     return Submission(
                 id = js['id'],
                 contest = contest,
@@ -54,4 +40,5 @@ def load_submissions(contest):
 
     problems = Problem.objects.filter(contest = contest)
     submissions = [ to_submission(contest, problems, s) for s in js if filter_submission(s) ]
+    logging.info("Adding %d submissions", len(submissions))
     Submission.objects.bulk_create(submissions)

@@ -23,6 +23,17 @@ class SPECK_IN_YOUR_BROTHERS_EYE:
     name = "Speck in your brother's eye"
     description = "Hack somebody's solution and get your own solution failed during system tests on the same problem."
 
+class achievement_info:
+    def __init__(self, id, name, description):
+        self.id = id
+        self.name = name
+        self.description = description
+
+VARIETY_MIN_REQUIREMENT = 5
+        
+class achievements:
+    VARIETY_IS_THE_SPICE_OF_LIFE = achievement_info(6, "Variety is the spice of life", "Solve problems in at least %d different languages" % VARIETY_MIN_REQUIREMENT)
+    
 problems_for_language_achievement = 50
 
 def get_language_achievement_description(language):

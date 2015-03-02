@@ -32,11 +32,11 @@ def to_stat_row(achievement, grouped_rewardings, progress):
                   
 def profile(request, handle):
     contestant = Contestant.objects.get(handle = handle)
-    achievements = Rewarding.objects.filter(participant = contestant).order_by("-date")
+    rewardings = Rewarding.objects.filter(participant = contestant).order_by("-date")
     
     by_achievement = lambda rewarding: rewarding.achievement.id
     grouped_rewardings = defaultdict(lambda: None)
-    for k, g in groupby(sorted(achievements, key=by_achievement), by_achievement):
+    for k, g in groupby(sorted(rewardings, key=by_achievement), by_achievement):
         grouped_rewardings[k] = list(g)
     
     achievements_unlocked = len(grouped_rewardings)
@@ -46,19 +46,30 @@ def profile(request, handle):
     progress_entries = execute_sql('''
                     SELECT achievement_id , SUM(progress)
                     FROM data_management_achievement_contestant_progress_by_contest
-                    WHERE contestant_id = %s group by achievement_id
+                    WHERE contestant_id = %s AND achievement_id >= 100
+                    GROUP BY achievement_id
                 ''', [ contestant.id ] )
     
     for row in progress_entries:
         achievement_progress[row[0]] = ( row[1] , problems_for_language_achievement )
     
+    bitmask_progress_entries = execute_sql('''
+                    SELECT achievement_id , bitcount(BIT_OR(progress))
+                    FROM data_management_achievement_contestant_progress_by_contest
+                    WHERE contestant_id = %s AND achievement_id = %s
+                    GROUP BY achievement_id
+                ''', [ contestant.id , achievements.VARIETY_IS_THE_SPICE_OF_LIFE.id ])
+
+    for row in bitmask_progress_entries:
+        achievement_progress[row[0]] = ( row[1] , VARIETY_MIN_REQUIREMENT )
+                
     all_achievements = Achievement.objects.order_by("name")
     all_achievements = [ to_stat_row(a, grouped_rewardings, achievement_progress) for a in all_achievements]
     
     return render(request,
                   'achievements/profile.html', {
                         'user': contestant,
-                        'achievements': achievements,
+                        'achievements': rewardings,
                         'achievements_unlocked': achievements_unlocked,
                         'all_achievements': all_achievements,
                   })
@@ -83,7 +94,7 @@ def achievement(request, achievementId):
                         'latest_rewardings': latest_rewardings,
                         'by_number': by_number,
               }
-    if achievement.id == POLYGLOT.id:
+    if achievement.id == POLYGLOT.id or achievement.id == achievements.VARIETY_IS_THE_SPICE_OF_LIFE.id:
         context['by_level'] = Rewarding.objects.filter(achievement = achievement) \
                                     .order_by('-level', 'date')[:30]
     return render(request, 'achievements/achievement.html', context)

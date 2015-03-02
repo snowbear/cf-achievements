@@ -3,7 +3,7 @@ from cf_api import *
 
 from achievements.models import *
 from data_management.models import *
-from helpers import *
+from crawling_helpers import *
 
 class multi_user_hack:
     def __init__(self, users):

@@ -212,6 +212,36 @@ def get_achievements_speck_in_your_brothers_eye(achievement, contest):
                         date = contest.date)
                     for author,problem in successful_hackers & bad_solvers
             ]
+
+def get_achievements_variety_is_the_spice_of_life(achievement, contest):
+    submissions = list(Submission.objects.filter(contest = contest, verdict = SUBMISSION_VERDICT.OK).order_by('author').prefetch_related(Prefetch('author')))
+    language_masks = defaultdict(int)
+    for s in submissions:
+        language = language_mapping(s.language)
+        if language.group == LANGUAGE_GROUP.Esoteric: continue
+        
+        language_masks[s.author] |= 1 << language.group
+    
+    batch_insert('data_management_achievement_contestant_progress_by_contest', 
+                 ('contest_id' , 'contestant_id' , 'achievement_id' , 'progress'),
+                 [ (contest.id , p1.id , achievement.id , p2) for (p1 , p2) in language_masks.items() ],
+                )
+    
+    achievers = execute_sql('''
+        SELECT contestant_id, bitcount(bit_or(progress))
+        FROM data_management_achievement_contestant_progress_by_contest p
+        LEFT JOIN achievements_rewarding r ON r.participant_id = p.contestant_id AND r.achievement_id = {achievement_id}
+        GROUP BY contestant_id
+        HAVING bitcount(bit_or(progress)) >= {min_count_to_solve} + MAX(coalesce(r.level, 0))
+    '''.format(achievement_id = achievement.id , min_count_to_solve = VARIETY_MIN_REQUIREMENT))
+        
+    return [ Rewarding( participant = Contestant(id = contestant_id),
+                        achievement = achievement,
+                        contest = contest,
+                        comment = "solving problems in %d different languages" % num_languages,
+                        date = contest.date,
+                        level = num_languages - VARIETY_MIN_REQUIREMENT + 1,
+                    ) for (contestant_id , num_languages) in achievers ]
             
 def get_achievements(achievement, contest):
     parser = achievement_parsers[achievement.id]
@@ -231,6 +261,7 @@ django.setup()
 from achievements.models import *
 from achievements.achievement_data import *
 from data_management.models import *
+from helpers.sql import *
 
 achievement_parsers = {
                         DID_NOT_SCRATCH_ME.id : achievement_parser(get_achievements_did_not_scratch_me),
@@ -253,6 +284,7 @@ achievement_parsers = {
                         LANGUAGE_ACHIEVEMENT_RUBY.id: language_expert_achievement_parser(LANGUAGE_GROUP.Ruby , "Ruby"),
                         LANGUAGE_ACHIEVEMENT_SCALA.id: language_expert_achievement_parser(LANGUAGE_GROUP.Scala , "Scala"),
                         LANGUAGE_ACHIEVEMENT_JAVASCRIPT.id: language_expert_achievement_parser(LANGUAGE_GROUP.JavaScript , "JavaScript"),
+                        achievements.VARIETY_IS_THE_SPICE_OF_LIFE.id: achievement_parser(get_achievements_variety_is_the_spice_of_life),
                       }
 
 if __name__ == '__main__':                      
