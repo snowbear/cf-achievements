@@ -97,8 +97,9 @@ class Language:
 
 class Languages:        
     GnuC = Language(1, "GNU C", LANGUAGE_GROUP.C)
+    GnuC = Language(27, "GNU C11", LANGUAGE_GROUP.C)
     GnuCpp = Language(2, "GNU C++", LANGUAGE_GROUP.Cpp)
-    GnuCpp0x = Language(3, "GNU C++0x", LANGUAGE_GROUP.Cpp)
+    GnuCpp0x = Language(3, "GNU C++0x", LANGUAGE_GROUP.Cpp) # seems to be outdated
     GnuCpp11 = Language(4, "GNU C++11", LANGUAGE_GROUP.Cpp)
     MsCpp = Language(5, "MS C++", LANGUAGE_GROUP.Cpp)
     CSharpMs = Language(6, "MS C#", LANGUAGE_GROUP.CSharp)
@@ -121,7 +122,7 @@ class Languages:
     JavaScript = Language(23, "JavaScript", LANGUAGE_GROUP.JavaScript)
     FSharp = Language(24, "F#", LANGUAGE_GROUP.FSharp)
     PyPy2 = Language(25, "PyPy 2", LANGUAGE_GROUP.Python)
-    PyPy3 = Language(25, "PyPy 3", LANGUAGE_GROUP.Python)
+    PyPy3 = Language(26, "PyPy 3", LANGUAGE_GROUP.Python)
 	
     Tcl = Language(100, "Tcl", LANGUAGE_GROUP.Esoteric)
     Io = Language(101, "Io", LANGUAGE_GROUP.Esoteric)
