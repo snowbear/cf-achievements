@@ -97,7 +97,7 @@ class Language:
 
 class Languages:        
     GnuC = Language(1, "GNU C", LANGUAGE_GROUP.C)
-    GnuC = Language(27, "GNU C11", LANGUAGE_GROUP.C)
+    GnuC11 = Language(27, "GNU C11", LANGUAGE_GROUP.C)
     GnuCpp = Language(2, "GNU C++", LANGUAGE_GROUP.Cpp)
     GnuCpp0x = Language(3, "GNU C++0x", LANGUAGE_GROUP.Cpp) # seems to be outdated
     GnuCpp11 = Language(4, "GNU C++11", LANGUAGE_GROUP.Cpp)
