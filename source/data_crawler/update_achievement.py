@@ -172,7 +172,7 @@ def get_achievements_polyglot(achievement, contest):
     return res
 
 def get_achievements_language_does_not_matter(achievement, contest):
-    ulr_round_ids = { 64 , 72 , 100 , 130 , 153 , 162 , 188 , 345 , 470 }
+    ulr_round_ids = { 64 , 72 , 100 , 130 , 153 , 162 , 188 , 345 , 470 , 530 , 531 }
     if contest.id not in ulr_round_ids: return []
 
     submissions = list(Submission.objects.filter(contest = contest, verdict = SUBMISSION_VERDICT.OK).all().order_by('author__id'))
