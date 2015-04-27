@@ -123,6 +123,8 @@ class Languages:
     FSharp = Language(24, "F#", LANGUAGE_GROUP.FSharp)
     PyPy2 = Language(25, "PyPy 2", LANGUAGE_GROUP.Python)
     PyPy3 = Language(26, "PyPy 3", LANGUAGE_GROUP.Python)
+    CppZip = Language(27, "GNU C++ 11 ZIP", LANGUAGE_GROUP.Cpp)
+    JavaZip = Language(28, "Java 8 ZIP", LANGUAGE_GROUP.Java)
 	
     Tcl = Language(100, "Tcl", LANGUAGE_GROUP.Esoteric)
     Io = Language(101, "Io", LANGUAGE_GROUP.Esoteric)
