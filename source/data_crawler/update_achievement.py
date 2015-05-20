@@ -7,6 +7,10 @@ from django.db.models import *
 from django.db import *
 
 from cf_api import *
+from achievements.models import *
+from achievements.achievement_data import *
+from data_management.models import *
+from helpers.sql import *
 
 def user_tag(handle):
 	return "[user:%s]" % handle
@@ -24,30 +28,10 @@ def join_with_commas_and_and(items):
         result += item;
     
     return result;
-    
-    
+        
 def add_achievement(list, achievement, contest, contestant, comment, level = None):
     rewarding = Rewarding(participant = contestant, achievement = achievement, comment = comment, date = contest.date, contest = contest, level = level)
     list.append(rewarding)
-
-def execute_sql(sql):
-    logging.debug("Executing SQL:")
-    logging.debug(sql)
-    cursor = connection.cursor()
-    cursor.execute(sql)
-    return cursor
-
-def batch_insert(table_name, column_names, values_list):
-    assert(type(column_names) == tuple)
-    if len(values_list) == 0: return
-    
-    values_string = ",".join(str(val) for val in values_list)
-    query = '''
-            INSERT INTO %s (%s)
-            VALUES
-            %s
-            ''' % (table_name , ",".join(column_names) , values_string)
-    execute_sql(query)
     
 class achievement_parser:
     def __init__(self, parser):
@@ -243,25 +227,14 @@ def get_achievements_variety_is_the_spice_of_life(achievement, contest):
                         level = num_languages - VARIETY_MIN_REQUIREMENT + 1,
                     ) for (contestant_id , num_languages) in achievers ]
             
-def get_achievements(achievement, contest):
+def get_achievements(achievement, contest, report):
     parser = achievement_parsers[achievement.id]
     rewardings = parser.parser(achievement, contest)
     for a in rewardings:
         logging.info("Got an achievement '%s'. Handle: %s. Comment: %s. level: %s", achievement.name, a.participant.handle, a.comment, str(a.level));
 
     Rewarding.objects.bulk_create(rewardings)
-
-# logging.basicConfig(filename=__file__ + ".log", level=logging.DEBUG, format='%(asctime)s %(levelname)s %(message)s')
-logging.config.fileConfig('logging.conf', disable_existing_loggers = False)
-
-current_dir = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(os.path.join(current_dir , "../"))
-django.setup()
-
-from achievements.models import *
-from achievements.achievement_data import *
-from data_management.models import *
-from helpers.sql import *
+    report.add_line("Achievement '<b>{name}</b>' parsed. Awarded {n} people", name = achievement.name, n = len(rewardings))
 
 achievement_parsers = {
                         DID_NOT_SCRATCH_ME.id : achievement_parser(get_achievements_did_not_scratch_me),
@@ -287,12 +260,11 @@ achievement_parsers = {
                         achievements.VARIETY_IS_THE_SPICE_OF_LIFE.id: achievement_parser(get_achievements_variety_is_the_spice_of_life),
                       }
 
-if __name__ == '__main__':                      
-    last_contest = Contest.objects.order_by('-order').first()
+def update_achievements(task, report):
+    expected_contest = Contest.objects.get(pk = task.additional_id)
+    report.add_line("Updating achievements for contest <b>{name}</b>", name = expected_contest.name)
 
     for achievement in Achievement.objects.all():
-        # if achievement.id != 101: continue
-
         logging.info("Checking achievement '%s'...", achievement.name)
         
         last_parse_order = -1
@@ -300,10 +272,11 @@ if __name__ == '__main__':
         if state.lastParsedContest != None:
             last_parse_order = state.lastParsedContest.order
         
-        while last_parse_order < last_contest.order:
+        if last_parse_order < expected_contest.order:
             contest = Contest.objects.filter(order__gt = last_parse_order).order_by('order').first()
+            assert(contest == expected_contest)
             logging.info("Next contest to update: %s (id = %d)", contest.name, contest.id)
-            get_achievements(achievement, contest)
+            get_achievements(achievement, contest, report)
             last_parse_order = contest.order
             state.lastParsedContest = contest
             state.save()

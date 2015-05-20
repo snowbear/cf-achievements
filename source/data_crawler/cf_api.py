@@ -84,3 +84,8 @@ def get_submissions(contest):
     logging.info("Getting submissions...")
     result = get_response_multi_page("contest.status?contestId=%d" % contest.id , lambda js: js['id'])
     return result
+    
+def get_ratings():
+    logging.info("Getting rated users...")
+    result = get_response("user.ratedList?activeOnly=false")
+    return result

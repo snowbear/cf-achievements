@@ -24,6 +24,8 @@ ALLOWED_HOSTS = []
 
 DATETIME_FORMAT = 'N j, Y'
 
+EMAIL_SUBJECT_PREFIX = "[CFA] "
+
 # Application definition
 
 INSTALLED_APPS = (

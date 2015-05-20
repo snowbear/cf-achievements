@@ -43,7 +43,7 @@ def to_hack(contest, problems, submissions, js):
                 is_manual = js['judgeProtocol']['manual'],
             )
 
-def load_hacks(contest):
+def load_hacks(contest, report):
     existing_hacks_count = Hack.objects.filter(problem__contest = contest).count()
     assert(existing_hacks_count == 0)
 
@@ -63,5 +63,5 @@ def load_hacks(contest):
     for lst in grouped_submissions.values():
         lst.sort(key = lambda s: s.creation_time_seconds, reverse = True)
     hacks = [ to_hack(contest, problems, grouped_submissions, h) for h in js if filter_hack(h) ]
-    logging.info("Adding %d hacks", len(hacks))
     Hack.objects.bulk_create(hacks)
+    report.add_line("Hack: {n} added", n = len(hacks))

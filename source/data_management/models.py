@@ -60,3 +60,13 @@ class Hack(models.Model):
     verdict = models.IntegerField()
     test_size = models.IntegerField()
     is_manual = models.BooleanField()
+    
+class Task(models.Model):
+    name = models.CharField(max_length = 20)
+    additional_id = models.IntegerField(null = True)
+    added_on = models.DateTimeField()
+    finished_on = models.DateTimeField(null = True)
+    
+    UPDATE_RATINGS = "update ratings"
+    LOAD_DATA = "load data"
+    UPDATE_ACHIEVEMENTS = "update achievements"

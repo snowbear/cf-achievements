@@ -47,7 +47,7 @@ def to_contest_participation(contest, js):
                 room = js['party'].get('room'),
             )
 
-def load_contest_participations(contest):
+def load_contest_participations(contest, report):
     existing_contest_participations_count = ContestParticipation.objects.filter(contest = contest).count()
     assert(existing_contest_participations_count == 0)
     
@@ -56,3 +56,4 @@ def load_contest_participations(contest):
     
     contest_participations = [ to_contest_participation(contest, p) for p in js ]
     ContestParticipation.objects.bulk_create(contest_participations)
+    report.add_line("ContestParticipation: {n} added", n = len(contest_participations))

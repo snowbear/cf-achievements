@@ -32,7 +32,7 @@ def to_submission(contest, problems, js):
                 memory_consumed_bytes = js['memoryConsumedBytes'],
             )
 
-def load_submissions(contest):
+def load_submissions(contest, report):
     existing_submissions_count = Submission.objects.filter(contest = contest).count()
     assert(existing_submissions_count == 0)
 
@@ -40,5 +40,5 @@ def load_submissions(contest):
 
     problems = Problem.objects.filter(contest = contest)
     submissions = [ to_submission(contest, problems, s) for s in js if filter_submission(s) ]
-    logging.info("Adding %d submissions", len(submissions))
     Submission.objects.bulk_create(submissions)
+    report.add_line("Submission: {n} added", n = len(submissions))
