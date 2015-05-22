@@ -34,7 +34,7 @@ def load_contests(report):
     contests = [ c for c in contests
                             if c['id'] not in known_contests
                             if contest_phase_mapping[c['phase']] == CONTEST_PHASE.FINISHED
-                            if c['startTimeSeconds'] < min_timestamp
+                            if c['startTimeSeconds'] + c['durationSeconds'] < min_timestamp
                 ]
     for c in contests:
         added_contest = add_contest(c['id'], c['name'], c['startTimeSeconds'])
