@@ -76,8 +76,6 @@ def filter_party(party):
 def get_hacks(contest):
     logging.info("Getting hacks...")
     result = get_response("contest.hacks?contestId=%d" % contest.id)
-    for h in result:
-        (h['hacker'] , h['defender']) = (h['defender'] , h['hacker'])
     return result
 
 def get_submissions(contest):
