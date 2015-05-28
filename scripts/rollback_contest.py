@@ -23,6 +23,7 @@ if response == "yes":
     prev_contest = Contest.objects.filter(order__lt = latest_contest.order).order_by("-order")[0]
     logging.info("Rolling back...")
     logging.info("Prev contest = {name}, id = {id}".format(name = prev_contest.name, id = prev_contest.id))
+    execute_sql("UPDATE data_management_achievementparseprogress_bycontest SET \"lastParsedContest_id\" = {old_id} WHERE \"lastParsedContest_id\" = {id};".format(id = latest_contest.id, old_id = prev_contest.id))
     execute_sql("DELETE FROM data_management_task WHERE additional_id = {id};".format(id = latest_contest.id))
     execute_sql("DELETE FROM achievements_rewarding WHERE contest_id = {id};".format(id = latest_contest.id))
     execute_sql("DELETE FROM data_management_achievement_contestant_progress_by_contest WHERE contest_id = {id};".format(id = latest_contest.id))
