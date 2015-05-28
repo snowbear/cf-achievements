@@ -61,6 +61,9 @@ class Hack(models.Model):
     test_size = models.IntegerField()
     is_manual = models.BooleanField()
     
+    def __str__(self):
+        return str(self.hacker) + " attacked " + str(self.defender) + " " + str(self.verdict)
+    
 class Task(models.Model):
     name = models.CharField(max_length = 20)
     additional_id = models.IntegerField(null = True)
