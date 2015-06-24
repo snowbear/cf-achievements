@@ -79,3 +79,5 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Allow all host headers
 ALLOWED_HOSTS = ['*']
+
+WSGI_APPLICATION = 'gettingstarted.wsgi.application'

@@ -12,5 +12,3 @@ DATABASES['default'] = {
 }
 
 DEBUG = TEMPLATE_DEBUG = True
-    
-WSGI_APPLICATION = 'gettingstarted.wsgi_local.application'

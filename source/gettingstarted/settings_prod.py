@@ -21,8 +21,6 @@ DATABASES['default'] = {
     'PORT': '',
 }
 
-WSGI_APPLICATION = 'gettingstarted.wsgi_cling.application'
-
 STATIC_BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 STATIC_ROOT = '/var/www/cfa'
 STATIC_URL = '/static/'
