@@ -20,8 +20,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = TEMPLATE_DEBUG = False
 
-ALLOWED_HOSTS = []
-
 DATETIME_FORMAT = 'N j, Y'
 
 EMAIL_SUBJECT_PREFIX = "[CFA] "
@@ -77,7 +75,6 @@ STATIC_URL = '/static/'
 # Honor the 'X-Forwarded-Proto' header for request.is_secure()
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-# Allow all host headers
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = [ "cfa.yuldashev.net" ]
 
 WSGI_APPLICATION = 'gettingstarted.wsgi.application'
