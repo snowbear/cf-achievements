@@ -7,16 +7,16 @@ DEFAULT_FROM_EMAIL = 'cfa.yuldashev@gmail.com'
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_HOST_USER = "cfa.yuldashev"
-EMAIL_HOST_PASSWORD = os.environ.get('CFA_EMAIL_ACCOUNT_PASSWORD')
+EMAIL_HOST_PASSWORD = os.environ["CFA_EMAIL_ACCOUNT_PASSWORD"]
 EMAIL_USE_TLS = True
 
-SECRET_KEY = os.environ.get('CFA_SECRET_KEY')
+SECRET_KEY = os.environ["CFA_SECRET_KEY"]
 
 DATABASES['default'] = {
     'ENGINE': 'django.db.backends.postgresql_psycopg2',
     'NAME': 'cf_achievements',
     'USER': 'postgres',
-    'PASSWORD': os.environ.get('CFA_DB_PASS_PROD'),
+    'PASSWORD': os.environ["CFA_DB_PASS_PROD"],
     'HOST': 'localhost',
     'PORT': '',
 }
