@@ -5,7 +5,7 @@ from itertools import *
 
 from django.core.urlresolvers import reverse
 from django.db.models import *
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
 
 from achievements.models import *
@@ -31,7 +31,7 @@ def to_stat_row(achievement, grouped_rewardings, progress):
     return (achievement, latest_rewarding, total_count , progress.get(achievement.id))
                   
 def profile(request, handle):
-    contestant = Contestant.objects.get(handle = handle)
+    contestant = get_object_or_404(Contestant, handle__iexact = handle)
     rewardings = Rewarding.objects.filter(participant = contestant).order_by("-date")
     
     by_achievement = lambda rewarding: rewarding.achievement.id
@@ -75,7 +75,7 @@ def profile(request, handle):
                   })
 
 def contest(request, contestId):
-    contest = Contest.objects.get(pk = contestId)
+    contest = get_object_or_404(Contest, pk = contestId)
     achievements = Rewarding.objects.filter(contest = contest).order_by("-date")
     return render(request,
                   'achievements/contest.html', {
@@ -84,7 +84,7 @@ def contest(request, contestId):
                   })
 
 def achievement(request, achievementId):
-    achievement = Achievement.objects.get(pk = achievementId)
+    achievement = get_object_or_404(Achievement, pk = achievementId)
     latest_rewardings = Rewarding.objects.filter(achievement = achievement).order_by("-date")[:50]
     by_number = Rewarding.objects.filter(achievement = achievement).values('participant') \
                                     .annotate(count = Count('id'), first_date = Min('date')) \
