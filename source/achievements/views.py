@@ -100,6 +100,7 @@ def achievement(request, achievementId):
     return render(request, 'achievements/achievement.html', context)
 
 def search_user(request):
+    if 'term' not in request.GET: return HttpResponse('')
     term = request.GET['term']
     matching_users = Contestant.objects.filter(handle__icontains = term).order_by("handle")
     if request.GET.get("ajax", "") == "true":
