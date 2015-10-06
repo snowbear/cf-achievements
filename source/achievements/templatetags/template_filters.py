@@ -53,14 +53,22 @@ def link(destination, text, cssClass = None, title = None):
     if title != None:
         attributes = attributes + " title='%s'" % title;
     return "<a href='%s' %s>%s</a>" % (destination, attributes, text)
-        
+
+def is_legendary_grand_master(user):
+    return user.rating != None and user.rating >= rank_limits[0][0]
+    
 def get_user_link(user):
     if type(user) is str:
         user = Contestant.objects.get(handle = user)
     elif type(user) is int:
         user = Contestant.objects.get(pk = user)
     cssClass = "rated-user %s" % get_color_style(user.rating)
-    return link(reverse('achievements:profile', args=[user.handle]), user.handle, cssClass)
+    linkText = user.handle
+    if is_legendary_grand_master(user):
+        linkText = "<span class='legendary-user-first-letter'>{firstLetter}</span>{remaining}".format(
+                                    firstLetter = user.handle[0], remaining = user.handle[1:]
+                            )
+    return link(reverse('achievements:profile', args=[user.handle]), linkText, cssClass)
 
 @register.filter()
 def to_user_rank(user):
