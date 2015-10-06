@@ -12,26 +12,30 @@ register = template.Library()
 def get_color_style(rating):
     if rating == None:
         return "user-black"
-    if rating >= 2200:
+    if rating >= 2400:
         return "user-red"
-    elif rating >= 1900:
+    elif rating >= 2200:
         return "user-orange"
-    elif rating >= 1700:
+    elif rating >= 1900:
         return "user-violet"
-    elif rating >= 1500:
+    elif rating >= 1600:
         return "user-blue"
+    elif rating >= 1400:
+        return "user-cyan"
     elif rating >= 1200:
         return "user-green"
     else:
         return "user-gray"
 
-rank_limits = [ (2600, "International Grandmaster") ,
-                (2200, "Grandmaster") ,
-                (2050, "International master"),
-                (1900, "Master"),
-                (1700, "Candidate Master"),
-                (1500, "Expert"),
-                (1350, "Specialist"),
+rank_limits = [ 
+                (2900, "Legendary grandmaster"),
+                (2600, "International Grandmaster"),
+                (2400, "Grandmaster"),
+                (2300, "International master"),
+                (2200, "Master"),
+                (1900, "Candidate Master"),
+                (1600, "Expert"),
+                (1400, "Specialist"),
                 (1200, "Pupil"),
                 (None, "Newbie")]
         

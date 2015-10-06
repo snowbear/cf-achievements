@@ -1,3 +1,5 @@
+/* Taken from http://st.codeforces.com/css/community.css */
+
 .rated-user {
     /*font-family: arial;*/
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -8,6 +10,14 @@
 .user-black {
     color: black !important;
     font-weight: normal !important;
+}
+
+.legendary-user-first-letter {
+    color: black !important;
+}
+
+.user-legendary {
+    color: red !important;
 }
 
 .user-red {
@@ -32,6 +42,10 @@
 
 .user-blue {
     color: blue !important;
+}
+
+.user-cyan {
+    color: #03A89E !important;
 }
 
 .user-green {
