@@ -1,5 +1,5 @@
-from cf_api import *
-from cf_api_enums import *
+from data_crawler.cf_api import *
+from data_crawler.cf_api_enums import *
 
 from achievements.models import *
 

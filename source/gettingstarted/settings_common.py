@@ -35,6 +35,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'achievements',
     'data_management',
+    'data_crawler',
 )
 
 MIDDLEWARE_CLASSES = (

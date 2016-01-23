@@ -1,7 +1,5 @@
+.idea
 venv
 *.pyc
-staticfiles
-.env
 /db.sqlite3
-/cf_achievements/settings.py
-/source/data_crawler/log.txt
+log.txt

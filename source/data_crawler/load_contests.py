@@ -4,8 +4,8 @@ import http.client
 import pytz
 from django.db.models import *
 
-from cf_api import *
-from cf_api_enums import *
+from data_crawler.cf_api import *
+from data_crawler.cf_api_enums import *
 from achievements.models import *
 from data_management.models import *
     
@@ -36,6 +36,7 @@ def load_contests(report):
                             if contest_phase_mapping[c['phase']] == CONTEST_PHASE.FINISHED
                             if c['startTimeSeconds'] + c['durationSeconds'] < min_timestamp
                 ]
+
     for c in contests:
         added_contest = add_contest(c['id'], c['name'], c['startTimeSeconds'])
         report.add_line("Added contest <b>{name}</b> [{id}]", name = added_contest.name, id = added_contest.id)

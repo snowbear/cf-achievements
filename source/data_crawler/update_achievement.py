@@ -6,7 +6,7 @@ from pytz import timezone
 from django.db.models import *
 from django.db import *
 
-from cf_api import *
+from data_crawler.cf_api import *
 from achievements.models import *
 from achievements.achievement_data import *
 from data_management.models import *

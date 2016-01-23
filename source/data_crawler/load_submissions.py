@@ -7,9 +7,9 @@ from django.db.models import *
 from achievements.models import *
 from data_management.models import *
 
-from cf_api import *
-from cf_api_enums import *
-from crawling_helpers import *
+from data_crawler.cf_api import *
+from data_crawler.cf_api_enums import *
+from data_crawler.crawling_helpers import *
 
 def filter_submission(js):
     return is_cool_participant(js['author'])

@@ -1,5 +1,5 @@
 from django.db.models import *
-from cf_api import *
+from data_crawler.cf_api import *
 
 from achievements.models import *
 from data_management.models import *

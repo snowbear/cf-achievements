@@ -4,7 +4,7 @@ import urllib.error, urllib.request
 import requests
 from time import *
 
-from cf_api_enums import *
+from data_crawler.cf_api_enums import *
 
 class STATIC:
     session = None

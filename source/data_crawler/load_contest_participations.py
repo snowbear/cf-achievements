@@ -1,9 +1,9 @@
 from django.db.models import *
-from cf_api import *
+from data_crawler.cf_api import *
 
 from achievements.models import *
 from data_management.models import *
-from crawling_helpers import *
+from data_crawler.crawling_helpers import *
 
 class multi_user_hack:
     def __init__(self, users):
