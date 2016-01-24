@@ -1,18 +1,18 @@
-import json
-import logging
-import urllib.request
 from enum import IntEnum
 
+
 def enum_mapping(enum_type):
-    return dict( [ ( e.name , e ) for e in enum_type ] )
+    return dict([(e.name, e) for e in enum_type])
+
 
 class CONTEST_PHASE(IntEnum):
-	BEFORE = 1
-	CODING = 2
-	PENDING_SYSTEM_TEST = 3
-	SYSTEM_TEST = 4
-	FINISHED = 5
+    BEFORE = 1
+    CODING = 2
+    PENDING_SYSTEM_TEST = 3
+    SYSTEM_TEST = 4
+    FINISHED = 5
 contest_phase_mapping = enum_mapping(CONTEST_PHASE)
+
 
 class PARTICIPANT_TYPE(IntEnum):
     CONTESTANT = 1
@@ -21,6 +21,7 @@ class PARTICIPANT_TYPE(IntEnum):
     MANAGER = 4
     OUT_OF_COMPETITION = 5
 participant_type_mapping = enum_mapping(PARTICIPANT_TYPE)
+
 
 class HACK_VERDICT(IntEnum):
     HACK_SUCCESSFUL = 1
@@ -32,7 +33,8 @@ class HACK_VERDICT(IntEnum):
     TESTING = 7
     OTHER = 8
 hack_verdict_mapping = enum_mapping(HACK_VERDICT)
-        
+
+
 class SUBMISSION_VERDICT(IntEnum):
     FAILED = 1
     OK = 2
@@ -53,6 +55,7 @@ class SUBMISSION_VERDICT(IntEnum):
     REJECTED = 17
 submission_verdict_mapping = enum_mapping(SUBMISSION_VERDICT)
 
+
 class SUBMISSION_TESTSET(IntEnum):
     SAMPLES = 1
     PRETESTS = 2
@@ -70,24 +73,26 @@ class SUBMISSION_TESTSET(IntEnum):
     TESTS10 = 114
 submission_testset_mapping = enum_mapping(SUBMISSION_TESTSET)
 
+
 class LANGUAGE_GROUP(IntEnum):
-	C = 1,
-	Cpp = 2,
-	CSharp = 3,
-	D = 4,
-	Go = 5,
-	Haskell = 6,
-	Java = 7,
-	Ocaml = 8,
-	Pascal = 10,
-	Perl = 11,
-	PHP = 12,
-	Python = 13,
-	Ruby = 14,
-	Scala = 15,
-	JavaScript = 16,
-	FSharp = 17,
-	Esoteric = 18,
+    C = 1,
+    Cpp = 2,
+    CSharp = 3,
+    D = 4,
+    Go = 5,
+    Haskell = 6,
+    Java = 7,
+    Ocaml = 8,
+    Pascal = 10,
+    Perl = 11,
+    PHP = 12,
+    Python = 13,
+    Ruby = 14,
+    Scala = 15,
+    JavaScript = 16,
+    FSharp = 17,
+    Esoteric = 18,
+
 
 class Language:
     def __init__(self, value, name, language_group):
@@ -95,11 +100,12 @@ class Language:
         self.name = name
         self.group = language_group
 
-class Languages:        
+
+class Languages:
     GnuC = Language(1, "GNU C", LANGUAGE_GROUP.C)
     GnuC11 = Language(27, "GNU C11", LANGUAGE_GROUP.C)
     GnuCpp = Language(2, "GNU C++", LANGUAGE_GROUP.Cpp)
-    GnuCpp0x = Language(3, "GNU C++0x", LANGUAGE_GROUP.Cpp) # seems to be outdated
+    GnuCpp0x = Language(3, "GNU C++0x", LANGUAGE_GROUP.Cpp)  # seems to be outdated
     GnuCpp11 = Language(4, "GNU C++11", LANGUAGE_GROUP.Cpp)
     MsCpp = Language(5, "MS C++", LANGUAGE_GROUP.Cpp)
     CSharpMs = Language(6, "MS C#", LANGUAGE_GROUP.CSharp)
@@ -123,9 +129,9 @@ class Languages:
     FSharp = Language(24, "F#", LANGUAGE_GROUP.FSharp)
     PyPy2 = Language(25, "PyPy 2", LANGUAGE_GROUP.Python)
     PyPy3 = Language(26, "PyPy 3", LANGUAGE_GROUP.Python)
-    CppZip = Language(27, "GNU C++ 11 ZIP", LANGUAGE_GROUP.Cpp)
+    CppZip = Language(27, "GNU C++11 ZIP", LANGUAGE_GROUP.Cpp)
     JavaZip = Language(28, "Java 8 ZIP", LANGUAGE_GROUP.Java)
-	
+
     Tcl = Language(100, "Tcl", LANGUAGE_GROUP.Esoteric)
     Io = Language(101, "Io", LANGUAGE_GROUP.Esoteric)
     Pike = Language(102, "Pike", LANGUAGE_GROUP.Esoteric)
@@ -139,14 +145,17 @@ class Languages:
 
     SecretLanguage = Language(150, "Mysterious Language", LANGUAGE_GROUP.Esoteric)
 
-all_languages = [ val for val in Languages.__dict__.values() if type(val) == Language ]
+
+all_languages = [val for val in Languages.__dict__.values() if type(val) == Language]
 language_mapping_dict_by_name = dict((l.name, l) for l in all_languages)
 language_mapping_dict_by_value = dict((l.value, l) for l in all_languages)
 
+
 def language_mapping(lang):
     if type(lang) == str:
-        if lang.startswith("Secret"): return Languages.SecretLanguage
+        if lang.startswith("Secret"):
+            return Languages.SecretLanguage
         return language_mapping_dict_by_name[lang]
     if type(lang) == int:
         return language_mapping_dict_by_value[lang]
-    assert(False)
+    raise NotImplementedError()
