@@ -36,8 +36,6 @@ class Command(BaseCommand):
 
         report = ReportBuilder()
         load_contests(report)
-        print("Hello")
-        print(report.get_result())
 
         if get_remaining_tasks_query().count() > 0:
             logging.info("{n} tasks to go".format(n=get_remaining_tasks_query().count()))
