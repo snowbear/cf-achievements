@@ -1,6 +1,7 @@
 import datetime
 import logging
 import pytz
+from os import path
 from django.core.mail import *
 from django.core.management.base import BaseCommand
 
@@ -32,7 +33,8 @@ def get_remaining_tasks_query():
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        logging.config.fileConfig('data_crawler/logging.conf')
+        logging_config_path = path.join(path.dirname(__file__), path.pardir, path.pardir, 'logging.conf')
+        logging.config.fileConfig(logging_config_path)
 
         report = ReportBuilder()
         load_contests(report)

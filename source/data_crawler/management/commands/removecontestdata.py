@@ -1,4 +1,5 @@
 import logging
+from os import path
 from django.core.management.base import BaseCommand
 
 from achievements import models
@@ -10,7 +11,8 @@ class Command(BaseCommand):
     help = 'Closes the specified poll for voting'
 
     def handle(self, *args, **options):
-        logging.config.fileConfig('data_crawler/logging.conf')
+        logging_config_path = path.join(path.dirname(__file__), path.pardir, path.pardir, 'logging.conf')
+        logging.config.fileConfig(logging_config_path)
 
         contest_id = args[0]
         contest = models.Contest.objects.get(pk=contest_id)
