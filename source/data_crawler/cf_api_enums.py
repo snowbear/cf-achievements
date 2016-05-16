@@ -142,6 +142,7 @@ class Languages:
     Roco = Language(107, "Roco", LANGUAGE_GROUP.Esoteric)
     FALSE = Language(108, "FALSE", LANGUAGE_GROUP.Esoteric)
     Picat = Language(109, "Picat", LANGUAGE_GROUP.Esoteric)
+    J = Language(110, "J", LANGUAGE_GROUP.Esoteric)
 
     SecretLanguage = Language(150, "Mysterious Language", LANGUAGE_GROUP.Esoteric)
 
