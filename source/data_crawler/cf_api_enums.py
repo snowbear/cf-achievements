@@ -135,6 +135,7 @@ class Languages:
     JavaZip = Language(28, "Java 8 ZIP", LANGUAGE_GROUP.Java)
     Kotlin = Language(29, "Kotlin", LANGUAGE_GROUP.Kotlin)
     Rust = Language(30, "Rust", LANGUAGE_GROUP.Rust)
+    GnuCpp14 = Language(31, "GNU C++14", LANGUAGE_GROUP.Cpp)
 
     Tcl = Language(100, "Tcl", LANGUAGE_GROUP.Esoteric)
     Io = Language(101, "Io", LANGUAGE_GROUP.Esoteric)
