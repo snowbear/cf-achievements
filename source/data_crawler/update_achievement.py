@@ -294,8 +294,8 @@ achievement_parsers = \
 
 
 def update_achievements(task, report):
-    expected_contest = Contest.objects.get(pk=task.additional_id)
-    report.add_line("Updating achievements for contest <b>{name}</b>", name=expected_contest.name)
+    contest = Contest.objects.get(pk=task.additional_id)
+    report.add_line("Updating achievements for contest <b>{name}</b>", name=contest.name)
 
     for achievement in Achievement.objects.all():
         logging.info("Checking achievement '%s'...", achievement.name)
@@ -305,9 +305,7 @@ def update_achievements(task, report):
         if state.lastParsedContest is not None:
             last_parse_order = state.lastParsedContest.order
         
-        if last_parse_order < expected_contest.order:
-            contest = Contest.objects.filter(order__gt=last_parse_order).order_by('order').first()
-            assert(contest == expected_contest)
+        if last_parse_order < contest.order:
             logging.info("Next contest to update: %s (id = %d)", contest.name, contest.id)
             get_achievements(achievement, contest, report)
             state.lastParsedContest = contest
