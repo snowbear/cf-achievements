@@ -2,7 +2,7 @@ from django.db import *
 import logging
 
 
-def execute_sql(sql, params=[]):
+def execute_sql(sql, params=None):
     cursor = connection.cursor()
     cursor.execute(sql, params)
     if sql.strip()[:10].lower().startswith('select'):
@@ -10,6 +10,12 @@ def execute_sql(sql, params=[]):
     else:
         logging.info("affected %d rows", cursor.rowcount)
         return cursor.rowcount
+
+
+def clear_table(table_name):
+    logging.info('Clearing table ' + table_name)
+    query = 'DELETE FROM %s' % table_name
+    execute_sql(query)
 
 
 def batch_insert(table_name, column_names, values_list):
