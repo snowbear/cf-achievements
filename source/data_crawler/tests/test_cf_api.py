@@ -10,3 +10,9 @@ class Tests(test.TestCase):
 
         data = cf_api.get_rating_changes(contest)
         self.assertEqual(66, len(data))
+
+    def test_get_rating_changes_returns_empty_list_for_unrated_contest(self):
+        contest = models.Contest(id=21)  # unrated contest
+
+        data = cf_api.get_rating_changes(contest)
+        self.assertEqual(0, len(data))

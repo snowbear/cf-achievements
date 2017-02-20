@@ -8,6 +8,13 @@ class STATIC:
     session = None
 
 
+class CodeforcesApiError(Exception):
+    def __init__(self, response_status, comment):
+        super().__init__("Error occurred while retrieving data from CF: %s - %s" % (response_status, comment))
+        self.response_status = response_status
+        self.comment = comment
+
+
 def get_response(request):
     url = "http://codeforces.com/api/" + request + "&lang=en"
     logging.info("Sending HTTP request to url: %s", url)
@@ -24,7 +31,7 @@ def get_response(request):
     response = json.loads(response)
         
     if response['status'] != 'OK':
-        raise Exception("Error occurred while retrieving data from CF: %s" % response['status'])
+        raise CodeforcesApiError(response['status'], response['comment'])
     result = response['result']
     logging.info("Got HTTP response")
     return result
@@ -91,8 +98,13 @@ def get_submissions(contest):
 
 def get_rating_changes(contest):
     logging.info("Getting contest rating changes...")
-    result = get_response("contest.ratingChanges?contestId=%d" % contest.id)
-    return result
+    try:
+        result = get_response("contest.ratingChanges?contestId=%d" % contest.id)
+        return result
+    except CodeforcesApiError as e:
+        if e.comment == "contestId: Rating changes are unavailable for this contest":
+            return []
+        raise
 
 
 def get_ratings():
