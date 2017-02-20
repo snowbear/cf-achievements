@@ -89,6 +89,12 @@ def get_submissions(contest):
     return result
     
 
+def get_rating_changes(contest):
+    logging.info("Getting contest rating changes...")
+    result = get_response("contest.ratingChanges?contestId=%d" % contest.id)
+    return result
+
+
 def get_ratings():
     logging.info("Getting rated users...")
     result = get_response("user.ratedList?activeOnly=false")

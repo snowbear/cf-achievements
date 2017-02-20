@@ -16,7 +16,7 @@ def add_contest(contest_id, name, timestamp):
     
     utc_now = datetime.datetime.now(pytz.utc)
 
-    Task.objects.create(name=Task.UPDATE_RATINGS, added_on=utc_now)
+    Task.objects.create(name=Task.UPDATE_RATINGS, additional_id=contest_id, added_on=utc_now)
     Task.objects.create(name=Task.LOAD_DATA, additional_id=contest_id, added_on=utc_now)
     Task.objects.create(name=Task.UPDATE_ACHIEVEMENTS, additional_id=contest_id, added_on=utc_now)
     return Contest.objects.create(id=contest_id, name=name, date=date, order=order)
