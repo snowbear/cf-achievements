@@ -7,6 +7,7 @@ from django.core.management.base import BaseCommand
 
 from achievements.models import *
 
+from data_crawler import cf_api
 from data_crawler.load_contest_participations import load_contest_participations
 from data_crawler.load_contests import load_contests
 from data_crawler.load_hacks import load_hacks
@@ -20,6 +21,11 @@ from data_management.models import Task
 
 def load_data(task, report):
     contest = Contest.objects.get(pk=task.additional_id)
+
+    if cf_api.is_private_contest(contest):
+        report.add_line("Skipping contest since it seems to be private")
+        return
+
     report.add_line("Loading data for contest <b>{name}</b>", name=contest.name)
     load_contest_participations(contest, report)
     load_problems(contest, report)

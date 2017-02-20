@@ -1,11 +1,15 @@
 import json
 import logging
+import re
 import requests
 from time import *
 
 
 class STATIC:
     session = None
+
+
+private_contest_response_pattern = 'contestId: Contest with id \d+ not found'
 
 
 class CodeforcesApiError(Exception):
@@ -102,7 +106,8 @@ def get_rating_changes(contest):
         result = get_response("contest.ratingChanges?contestId=%d" % contest.id)
         return result
     except CodeforcesApiError as e:
-        if e.comment == "contestId: Rating changes are unavailable for this contest":
+        if e.comment == "contestId: Rating changes are unavailable for this contest" or \
+                        re.match(private_contest_response_pattern, e.comment) is not None:
             return []
         raise
 
@@ -111,3 +116,13 @@ def get_ratings():
     logging.info("Getting rated users...")
     result = get_response("user.ratedList?activeOnly=false")
     return result
+
+
+def is_private_contest(contest):
+    try:
+        get_response("contest.status?contestId=%d&from=1&count=1" % contest.id)
+        return False
+    except CodeforcesApiError as e:
+        if re.match(private_contest_response_pattern, e.comment) is not None:
+            return True
+        raise
