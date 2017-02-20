@@ -8,7 +8,7 @@ from helpers import sql
 
 class Command(BaseCommand):
     args = 'contest_id'
-    help = 'Closes the specified poll for voting'
+    help = 'Removes all the data loaded for a particular contest. Has no effect on calculated data like rewardings.'
 
     def handle(self, *args, **options):
         logging_config_path = path.join(path.dirname(__file__), path.pardir, path.pardir, 'logging.conf')
