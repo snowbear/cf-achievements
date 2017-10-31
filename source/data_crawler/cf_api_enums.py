@@ -136,6 +136,7 @@ class Languages:
     Kotlin = Language(29, "Kotlin", LANGUAGE_GROUP.Kotlin)
     Rust = Language(30, "Rust", LANGUAGE_GROUP.Rust)
     GnuCpp14 = Language(31, "GNU C++14", LANGUAGE_GROUP.Cpp)
+    PascalAbcNet = Language(32, "PascalABC.NET", LANGUAGE_GROUP.Pascal)
 
     Tcl = Language(100, "Tcl", LANGUAGE_GROUP.Esoteric)
     Io = Language(101, "Io", LANGUAGE_GROUP.Esoteric)
